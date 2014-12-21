@@ -37,8 +37,8 @@ TODO
 Installation
 ------------
 
-First, either clone the repository with ``git clone
-git://github.com/nikola-k/willie.git`` or download a tarball from GitHub.
+First, either clone the repository with `git clone
+git://github.com/nikola-k/willie.git` or download a tarball from GitHub.
 
 Willie requirements can be installed by running `pip install -r requirements.txt`.
 
@@ -47,15 +47,15 @@ binary build for windows from various websites.
 
 
 In the source directory (whether cloned or from the tarball) run
-``setup.py install``. You can then run ``willie`` to configure and start the
-bot. Alternately, you can just run the ``willie.py`` file in the source
+`setup.py install`. You can then run `willie` to configure and start the
+bot. Alternately, you can just run the `willie.py` file in the source
 directory.
 
 Adding modules
 --------------
-The easiest place to put new modules is in ``~/.willie/modules``. You will need
-to add a a line to the ``[core]`` section of your config file saying
-``extra = /home/yourname/.willie/modules``.
+The easiest place to put new modules is in `~/.willie/modules`. You will need
+to add a a line to the `[core]` section of your config file saying
+`extra = /home/yourname/.willie/modules`.
 
 
 TODO
@@ -68,7 +68,7 @@ TODO
 Other
 -----
 
-For a list of contributions to the Jenni fork see the file ``CREDITS``.
+For a list of contributions to the Jenni fork see the file `CREDITS`.
 
 
 Original License
@@ -86,13 +86,13 @@ Original License
          modified version of this package, you are encouraged to publicly
          release the modified version of this package.
 
-   ***********************
+      ***********************
 
-   THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT WARRANTY. ANY EXPRESS OR
-   IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-   DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR ANY
-   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-   DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THIS PACKAGE.
-
-   ***********************
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT WARRANTY. ANY EXPRESS OR
+       IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+       WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+       DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR ANY
+       DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+       DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THIS PACKAGE.
+    
+       ***********************
