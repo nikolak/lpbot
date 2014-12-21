@@ -44,7 +44,7 @@ def configure(config):
     chunk = ''
     if config.option('Configuring github issue reporting and searching module', False):
         config.interactive_add('github', 'oauth_token', 'Github API Oauth2 token', '')
-        config.interactive_add('github', 'repo', 'Github repository', 'embolalia/willie')
+        config.interactive_add('github', 'repo', 'Github repository', 'nikolak/lpbot')
     return chunk
 
 
