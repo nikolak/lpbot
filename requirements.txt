@@ -5,3 +5,4 @@ pygeoip
 praw
 feedparser
 pyenchant
+requests
