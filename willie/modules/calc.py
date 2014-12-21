@@ -41,22 +41,6 @@ def c(bot, trigger):
     bot.reply(result)
 
 
-@commands('py')
-@example('.py len([1,2,3])', '3')
-def py(bot, trigger):
-    """Evaluate a Python expression."""
-    if not trigger.group(2):
-        return bot.say("Need an expression to evaluate")
-
-    query = trigger.group(2)
-    uri = 'http://tumbolia.appspot.com/py/'
-    answer = web.get(uri + web.quote(query))
-    if answer and answer!="":
-        bot.say(answer)
-    else:
-        bot.reply('Sorry, no result.')
-
-
 @commands('wa', 'wolfram')
 @example('.wa sun mass / earth mass',
          '[WOLFRAM] M_sun\/M_earth  (solar mass per Earth mass) = 332948.6')
