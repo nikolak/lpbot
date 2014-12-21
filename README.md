@@ -15,6 +15,9 @@ Modules, and all other changes, are written with **only** python 2 support in mi
 Original files and changes to them are licensed under "Eiffel Forum License, version 2", 
 see bottom of this readme or COPYING for license text.
 
+For pypy sandbox feature to work you need to install pypy-sandbox, it's usually available in repos
+and can be installed by typing `apt-get install python-pypy.sandbox`.
+
 TODO
 ----
 
