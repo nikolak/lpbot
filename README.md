@@ -10,7 +10,7 @@ in the future.
 
 Modules, and all other changes, are written with **only** python 2 support in mind.
 
-**Any code changes made are licensed under Apache License 2.0, see LICENSE for more info**
+**All code changes made are licensed under Apache License 2.0, see LICENSE for more info**
 
 Original code is licensed under "Eiffel Forum License, version 2", see bottom of this readme for full license text.
 
