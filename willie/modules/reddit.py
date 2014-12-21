@@ -39,7 +39,7 @@ def rpost_info(bot, trigger, match=None):
     match = match or trigger
     s = r.get_submission(url=match.group(1))
 
-    message = ('[REDDIT] {title} {link}{nsfw} | {points} points ({percent}) | '
+    message = ('[reddit] {title} {link}{nsfw} | {points} points ({percent}) | '
                '{comments} comments | Posted by {author}')
 
     if s.is_self:
@@ -89,7 +89,7 @@ def redditor_info(bot, trigger, match=None):
             return
         #Fail silently if it wasn't an explicit command.
 
-    message = '[REDDITOR] ' + u.name
+    message = '[redditor] ' + u.name
     if commanded:
         message = message + ' | http://reddit.com/u/' + u.name
     if u.is_gold:
