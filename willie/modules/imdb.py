@@ -27,10 +27,10 @@ from willie.logger import get_logger
 LOGGER = get_logger(__name__)
 
 
-@willie.module.commands('movie', 'imdb')
-@willie.module.example('.movie ThisTitleDoesNotExist', '[IMDb] Movie not found!')
-@willie.module.example('.movie Citizen Kane', '[IMDb] Title: Citizen Kane | Year: 1941 | Rating: 8.4 | Genre: Drama, Mystery | IMDB Link: http://imdb.com/title/tt0033467')
-def movie(bot, trigger):
+@willie.module.commands('imbd')
+@willie.module.example('.imbd ThisTitleDoesNotExist', '[IMDb] Movie not found!')
+@willie.module.example('.imdb Citizen Kane', '[IMDb] Title: Citizen Kane | Year: 1941 | Rating: 8.4 | Genre: Drama, Mystery | IMDB Link: http://imdb.com/title/tt0033467')
+def imdb(bot, trigger):
     """
     Returns some information about a movie, like Title, Year, Rating, Genre and IMDB Link.
     """
