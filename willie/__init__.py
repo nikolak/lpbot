@@ -1,14 +1,10 @@
-# coding=utf8
-"""
-__init__.py - Willie Init Module
-Copyright 2008, Sean B. Palmer, inamidst.com
-Copyright 2012, Edward Powell, http://embolalia.net
-Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
+# -*- coding: utf-8 -*-
 
-Licensed under the Eiffel Forum License 2.
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Copyright 2012, Edward Powell, http://embolalia.net
+# Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
+# Licensed under the Eiffel Forum License 2.
 
-http://willie.dftba.net/
-"""
 from __future__ import unicode_literals
 from __future__ import absolute_import
 

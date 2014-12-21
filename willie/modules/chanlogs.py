@@ -1,12 +1,9 @@
-# coding=utf8
-"""
-chanlogs.py - Willie Channel Logger module
-Copyright 2014, David Baumgold <david@davidbaumgold.com>
+# -*- coding: utf-8 -*-
 
-Licensed under the Eiffel Forum License 2
+# Copyright 2014, David Baumgold <david@davidbaumgold.com>
+# Licensed under the Eiffel Forum License 2
 
-http://willie.dftba.net
-"""
+
 from __future__ import unicode_literals
 import os
 import os.path

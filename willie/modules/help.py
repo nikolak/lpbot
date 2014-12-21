@@ -1,12 +1,9 @@
-# coding=utf8
-"""
-help.py - Willie Help Module
-Copyright 2008, Sean B. Palmer, inamidst.com
-Copyright © 2013, Elad Alfassa, <elad@fedoraproject.org>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Copyright © 2013, Elad Alfassa, <elad@fedoraproject.org>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 from willie.module import commands, rule, example, priority

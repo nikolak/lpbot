@@ -1,15 +1,10 @@
-# coding=utf8
-"""
-youtube.py - Willie YouTube Module
-Copyright 2012, Dimitri Molenaars, Tyrope.nl.
-Copyright © 2012-2014, Elad Alfassa, <elad@fedoraproject.org>
-Copyright 2012, Edward Powell, embolalia.net
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dfbta.net
+# Copyright 2012, Dimitri Molenaars, Tyrope.nl.
+# Copyright © 2012-2014, Elad Alfassa, <elad@fedoraproject.org>
+# Copyright 2012, Edward Powell, embolalia.net
+# Licensed under the Eiffel Forum License 2.
 
-This module will respond to .yt and .youtube commands and searches the youtubes.
-"""
 from __future__ import unicode_literals
 
 from willie import web, tools

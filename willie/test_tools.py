@@ -1,12 +1,8 @@
-# coding=utf8
-"""This module has classes and functions that can help in writing tests.
+# -*- coding: utf-8 -*-
 
-test_tools.py - Willie misc tools
-Copyright 2013, Ari Koivula, <ari@koivu.la>
-Licensed under the Eiffel Forum License 2.
+# Copyright 2013, Ari Koivula, <ari@koivu.la>
+# Licensed under the Eiffel Forum License 2.
 
-https://willie.dftba.net
-"""
 from __future__ import unicode_literals
 
 import sys

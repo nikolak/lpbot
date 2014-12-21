@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-tell.py - Willie Tell and Ask Module
-Copyright 2008, Sean B. Palmer, inamidst.com
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 import os

@@ -1,4 +1,4 @@
-# coding=utf8
+# -*- coding: utf-8 -*-
 """
 *Availability: 3+ for all functions; attributes may vary.*
 
@@ -31,9 +31,9 @@ The configuration function, if used, must be declared with the signature
 ``configure(config)``. To add options, use ``interactive_add``, ``add_list``
 and ``add_option``.
 """
-#Copyright 2012, Edward Powell, embolalia.net
-#Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
-#Licensed under the Eiffel Forum License 2.
+# Copyright 2012, Edward Powell, embolalia.net
+# Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
+# Licensed under the Eiffel Forum License 2.
 
 from __future__ import unicode_literals
 from __future__ import print_function

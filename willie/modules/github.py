@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-github.py - Willie Github Module
-Copyright 2012, Dimitri Molenaars http://tyrope.nl/
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net/
-"""
+# Copyright 2012, Dimitri Molenaars http://tyrope.nl/
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 from datetime import datetime

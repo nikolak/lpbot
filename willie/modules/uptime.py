@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-uptime.py - Uptime module
-Copyright 2014, Fabian Neundorf
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2014, Fabian Neundorf
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 from willie.module import commands

@@ -1,4 +1,4 @@
-# coding=utf8
+# -*- coding: utf-8 -*-
 """This module is meant to be imported from willie modules.
 
 It defines the following decorators for defining willie callables:
@@ -12,10 +12,10 @@ willie.module.event
 willie.module.rate
 willie.module.example
 """
-#Copyright 2013, Ari Koivula, <ari@koivu.la>
-#Copyright © 2013, Elad Alfassa <elad@fedoraproject.org>
-#Copyright 2013, Lior Ramati <firerogue517@gmail.com>
-#Licensed under the Eiffel Forum License 2.
+# Copyright 2013, Ari Koivula, <ari@koivu.la>
+# Copyright © 2013, Elad Alfassa <elad@fedoraproject.org>
+# Copyright 2013, Lior Ramati <firerogue517@gmail.com>
+# Licensed under the Eiffel Forum License 2.
 
 from __future__ import unicode_literals
 

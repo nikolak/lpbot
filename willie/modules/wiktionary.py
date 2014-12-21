@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-wiktionary.py - Willie Wiktionary Module
-Copyright 2009, Sean B. Palmer, inamidst.com
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2009, Sean B. Palmer, inamidst.com
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 import re

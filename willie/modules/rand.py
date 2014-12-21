@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-rand.py - Rand Module
-Copyright 2013, Ari Koivula, <ari@koivu.la>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2013, Ari Koivula, <ari@koivu.la>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 from willie.module import commands, example

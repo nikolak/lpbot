@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-reload.py - Willie Module Reloader Module
-Copyright 2008, Sean B. Palmer, inamidst.com
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 import sys

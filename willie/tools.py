@@ -1,17 +1,10 @@
-# coding=utf8
-"""
-*Availability: 3+*
-``tools`` contains a number of useful miscellaneous tools and shortcuts for use
-in Willie modules.
+# -*- coding: utf-8 -*-
 
-tools.py - Willie misc tools
-Copyright 2008, Sean B. Palmer, inamidst.com
-Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
-Copyright 2012, Edward Powell, embolalia.net
-Licensed under the Eiffel Forum License 2.
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
+# Copyright 2012, Edward Powell, embolalia.net
+# Licensed under the Eiffel Forum License 2.
 
-https://willie.dftba.net
-"""
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals

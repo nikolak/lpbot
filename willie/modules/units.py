@@ -1,11 +1,9 @@
-# coding=utf8
-"""
-units.py - Unit conversion module for Willie
-Copyright © 2013, Elad Alfassa, <elad@fedoraproject.org>
-Copyright © 2013, Dimitri Molenaars, <tyrope@tyrope.nl>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-"""
+# Copyright © 2013, Elad Alfassa, <elad@fedoraproject.org>
+# Copyright © 2013, Dimitri Molenaars, <tyrope@tyrope.nl>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals, division
 from willie.module import commands, example, NOLIMIT
 import re

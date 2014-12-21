@@ -1,11 +1,7 @@
-# coding=utf8
-"""
-reddit-info.py - Willie Reddit module
-Author: Edward Powell, embolalia.net
-About: http://willie.dftba.net
+# -*- coding: utf-8 -*-
 
-This module provides special tools for reddit, namely showing detailed info about reddit posts
-"""
+# Author: Edward Powell, embolalia.net
+
 from __future__ import unicode_literals
 
 from willie.module import commands, rule, example, NOLIMIT

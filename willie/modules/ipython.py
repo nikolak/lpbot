@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-ipython.py - willie ipython console!
-Copyright © 2014, Elad Alfassa <elad@fedoraproject.org>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-Willie: http://willie.dftba.net/
-"""
+# Copyright © 2014, Elad Alfassa <elad@fedoraproject.org>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 import willie
 import sys

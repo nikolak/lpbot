@@ -1,15 +1,11 @@
-# coding=utf8
-"""
-admin.py - Willie Admin Module
-Copyright 2010-2011, Sean B. Palmer (inamidst.com) and Michael Yanovich
-(yanovich.net)
-Copyright © 2012, Elad Alfassa, <elad@fedoraproject.org>
-Copyright 2013, Ari Koivula <ari@koivu.la>
+# -*- coding: utf-8 -*-
 
-Licensed under the Eiffel Forum License 2.
+# Copyright 2010-2011, Sean B. Palmer (inamidst.com) and Michael Yanovich
+# (yanovich.net)
+# Copyright © 2012, Elad Alfassa, <elad@fedoraproject.org>
+# Copyright 2013, Ari Koivula <ari@koivu.la>
+# Licensed under the Eiffel Forum License 2.
 
-http://willie.dftba.net
-"""
 from __future__ import unicode_literals
 
 import willie.module

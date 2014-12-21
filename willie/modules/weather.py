@@ -1,12 +1,9 @@
-# coding=utf8
-"""
-weather.py - Willie Yahoo! Weather Module
-Copyright 2008, Sean B. Palmer, inamidst.com
-Copyright 2012, Edward Powell, embolalia.net
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Copyright 2012, Edward Powell, embolalia.net
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 from willie import web

@@ -1,13 +1,10 @@
-# coding=utf8
-"""
-xkcd.py - XKCD Module
-Copyright 2010, Michael Yanovich (yanovich.net), and Morgan Goose
-Copyright 2012, Lior Ramati
-Copyright 2013, Edward Powell (embolalia.com)
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2010, Michael Yanovich (yanovich.net), and Morgan Goose
+# Copyright 2012, Lior Ramati
+# Copyright 2013, Edward Powell (embolalia.com)
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 import json

@@ -1,12 +1,9 @@
-# coding=utf8
-"""
-version.py - Willie Version Module
-Copyright 2009, Silas Baronda
-Copyright 2014, Dimitri Molenaars <tyrope@tyrope.nl>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2009, Silas Baronda
+# Copyright 2014, Dimitri Molenaars <tyrope@tyrope.nl>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 from datetime import datetime

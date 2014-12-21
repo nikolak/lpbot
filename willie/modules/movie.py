@@ -1,11 +1,23 @@
-# coding=utf8
-"""
-imdb.py - Willie Movie Information Module
-Copyright © 2012-2013, Elad Alfassa, <elad@fedoraproject.org>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-This module relies on imdbapi.com
-"""
+# Copyright 2014 Nikola Kovacevic <nikolak@outlook.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Original code copyright:
+# Copyright © 2012-2013, Elad Alfassa, <elad@fedoraproject.org>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 import json
 import willie.web as web

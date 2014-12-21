@@ -1,11 +1,7 @@
-# coding=utf8
-"""
-isup.py - Simple website status check with isup.me
-Author: Edward Powell http://embolalia.net
-About: http://willie.dftba.net
+# -*- coding: utf-8 -*-
 
-This allows users to check if a website is up through isup.me.
-"""
+# Author: Edward Powell http://embolalia.net
+
 from __future__ import unicode_literals
 
 from willie import web

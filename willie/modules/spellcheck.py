@@ -1,14 +1,9 @@
-# coding=utf8
-"""
-spellcheck.py - Willie spell check Module
-Copyright © 2012, Elad Alfassa, <elad@fedoraproject.org>
-Copyright © 2012, Lior Ramati
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
+# Copyright © 2012, Elad Alfassa, <elad@fedoraproject.org>
+# Copyright © 2012, Lior Ramati
+# Licensed under the Eiffel Forum License 2.
 
-This module relies on pyenchant, on Fedora and Red Hat based system, it can be found in the package python-enchant
-"""
 from __future__ import unicode_literals
 import enchant
 from willie.module import commands, example

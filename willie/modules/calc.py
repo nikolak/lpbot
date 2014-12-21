@@ -1,11 +1,8 @@
-# coding=utf8
-"""
-calc.py - Willie Calculator Module
-Copyright 2008, Sean B. Palmer, inamidst.com
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dfbta.net
-"""
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 
 import re

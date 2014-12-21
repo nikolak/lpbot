@@ -24,7 +24,7 @@ for file in $(find_source_files); do
     if echo $line | grep -q '#!/usr/bin/env python'; then
         line=$(head -n 2 $file | tail -n 1)
     fi
-    if ! echo $line | grep -q '# coding=utf8'; then
+    if ! echo $line | grep -q '# -*- coding: utf-8 -*-'; then
         echo $file
         fail_coding=true
     fi
