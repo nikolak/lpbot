@@ -20,5 +20,4 @@ def uptime(bot, trigger):
     delta = datetime.timedelta(seconds=round((datetime.datetime.utcnow() -
                                               bot.memory["uptime"])
                                              .total_seconds()))
-    bot.say("I've been sitting here for {} and I keep "
-            "going!".format(delta))
+    bot.say("Current uptime: {}".format(delta))
