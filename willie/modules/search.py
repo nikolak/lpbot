@@ -53,13 +53,13 @@ def search_bing(query, api_key, search_type="Web"):
     if not query:
         return "No query specified"
 
-    if query.find("results")!=-1:
+    if query.find("results") != -1:
         r_index = query.find("results")
-        r_string = query[r_index-2:r_index].rstrip()
+        r_string = query[r_index - 2:r_index].rstrip()
 
         try:
-            r_string=int(r_string)
-            if r_string<1 or r_string>3:
+            r_string = int(r_string)
+            if r_string < 1 or r_string > 3:
                 raise ValueError
 
             results = r_string
@@ -69,9 +69,9 @@ def search_bing(query, api_key, search_type="Web"):
     query_url = api_query.format(s_type=search_type, query=query, results=results)
 
     for key, value in request_keymap.items():
-        query_url=query_url.replace(key,value)
+        query_url = query_url.replace(key, value)
 
-    r = requests.get(api_base+query_url, auth=(api_key, api_key))
+    r = requests.get(api_base + query_url, auth=(api_key, api_key))
 
     search_results = None
     if r.status_code == 200:
@@ -81,22 +81,22 @@ def search_bing(query, api_key, search_type="Web"):
             return "Something went wrong while converting result to json"
 
     if not search_results:
-        return "Nothing found"
+        return "[bing] :: Nothing found"
 
     message = u"[bing] :: "
-    if results>1:
+    if results > 1:
         for num in range(results):
             try:
-
-                message+=u"{} - {} :: ".format(num+1, search_results[num]['Url'])
+                message += u"{} - {} :: ".format(num + 1, search_results[num]['Url'])
             except:
-                message+=u"{} - Not found :: ".format(num+1)
+                message += u"{} - Not found :: ".format(num + 1)
     else:
-        message+=u"{} - {} :: {}".format(search_results[0]['Title'],
-                                        search_results[0]['Url'],
-                                        search_results[0]['Description'])
+        message += u"{} - {} :: {}".format(search_results[0]['Title'],
+                                           search_results[0]['Url'],
+                                           search_results[0]['Description'])
 
     return message
+
 
 @commands('bing', 'search', 'b')
 @example('.bing microsoft windows')
