@@ -1,13 +1,25 @@
 #!/usr/bin/env python2.7
-# coding=utf8
-"""
-Willie - An IRC Bot
-Copyright 2008, Sean B. Palmer, inamidst.com
-Copyright © 2012-2014, Elad Alfassa <elad@fedoraproject.org>
-Licensed under the Eiffel Forum License 2.
+# -*- coding: utf-8 -*-
 
-http://willie.dftba.net
-"""
+# Copyright 2014 Nikola Kovacevic <nikolak@outlook.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Original code copyright:
+# Copyright 2008, Sean B. Palmer, inamidst.com
+# Copyright © 2012-2014, Elad Alfassa <elad@fedoraproject.org>
+# Licensed under the Eiffel Forum License 2.
+
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -15,10 +27,10 @@ import sys
 from willie.tools import stderr
 
 if sys.version_info < (2, 7):
-    stderr('Error: Requires Python 2.7 or later. Try python2.7 willie')
+    stderr('Error: Requires Python 2.7 or later.')
     sys.exit(1)
-if sys.version_info.major == 3 and sys.version_info.minor < 3:
-    stderr('Error: When running on Python 3, Python 3.3 is required.')
+if sys.version_info.major == 3:
+    stderr('Python 3 is no supported. Check out original code for python 3 support')
     sys.exit(1)
 
 import os
@@ -95,20 +107,21 @@ def main(argv=None):
                             dest="version", help="Show version number and exit")
         opts = parser.parse_args()
 
-        # try:
-        #     if os.getuid() == 0 or os.geteuid() == 0:
-        #         stderr('Error: Do not run Willie with root privileges.')
-        #         sys.exit(1)
-        # except AttributeError:
-        #     # Windows don't have os.getuid/os.geteuid
-        #     pass
+        try:
+            if os.getuid() == 0 or os.geteuid() == 0:
+                prompt = raw_input("Are you sure you want to run as root? [Y/N]")
+                if prompt.lower() not in ['y', 'yes']:
+                    stderr('Aborting bot run')
+                    sys.exit(1)
+        except AttributeError:
+            # Windows doesn't have os.getuid/os.geteuid
+            pass
 
         if opts.version:
             py_ver = '%s.%s.%s' % (sys.version_info.major,
                                    sys.version_info.minor,
                                    sys.version_info.micro)
             print('Willie %s (running on python %s)' % (__version__, py_ver))
-            print('http://willie.dftba.net/')
             return
         elif opts.wizard:
             wizard('all', opts.config)
