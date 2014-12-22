@@ -150,8 +150,6 @@ def search_google(query, cs_cx, api_key):
     query_url = 'https://www.googleapis.com/customsearch/v1?{}'.format(
         urllib.urlencode(params))
 
-    print query_url, r_to_show
-
     r = requests.get(query_url)
 
     if r.status_code != 200:
