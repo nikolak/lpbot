@@ -63,6 +63,7 @@ def search_bing(query, api_key, search_type="Web"):
                 raise ValueError
 
             results = r_string
+            query = query.replace("{} results".format(results), "")
         except ValueError:
             pass
 
@@ -111,3 +112,14 @@ def bing(bot, trigger):
         bing_result = "Error while searching bing"
 
     bot.reply(bing_result)
+
+
+# Google API
+# creator="004955076394632529491" {cseId}
+# id="nenfuarsrse" {
+# API KEY AIzaSyCblt4pXQ2vms6J4JOl0Qmpox7H4EtX6p4 {apikey}
+# https://www.googleapis.com/customsearch/v1?googlehost=google.co.uk&safe=medium&searchType=image&key={apikey}&cx={cseId}&q={search}
+
+# https://www.googleapis.com/customsearch/v1?googlehost=google.co.uk&safe=medium&searchType=image&key=AIzaSyCblt4pXQ2vms6J4JOl0Qmpox7H4EtX6p4&cx=004955076394632529491&q=xbox
+
+# https://www.googleapis.com/customsearch/v1?googlehost=google.co.uk&key=AIzaSyCblt4pXQ2vms6J4JOl0Qmpox7H4EtX6p4&cx=004955076394632529491&q=xbox
