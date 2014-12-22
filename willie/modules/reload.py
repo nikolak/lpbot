@@ -30,7 +30,7 @@ def f_reload(bot, trigger):
         bot.callables = None
         bot.commands = None
         bot.setup()
-        return bot.reply('done')
+        return bot.reply('All done!')
 
     if name not in sys.modules:
         return bot.reply('%s: not loaded, try the `load` command' % name)
@@ -76,10 +76,10 @@ def f_reload(bot, trigger):
 
 @willie.module.nickname_commands('update')
 def f_update(bot, trigger):
+    """Pulls the latest versions of all modules from Git"""
     if not trigger.admin:
         return
 
-    """Pulls the latest versions of all modules from Git"""
     proc = subprocess.Popen('/usr/bin/git pull',
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=True)
