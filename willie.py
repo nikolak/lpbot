@@ -93,15 +93,15 @@ def main(argv=None):
                             dest="version", help="Show version number and exit")
         opts = parser.parse_args()
 
-        try:
-            if os.getuid() == 0 or os.geteuid() == 0:
-                prompt = raw_input("Are you sure you want to run as root? [Y/N]")
-                if prompt.lower() not in ['y', 'yes']:
-                    stderr('Aborting bot run')
-                    sys.exit(1)
-        except AttributeError:
-            # Windows doesn't have os.getuid/os.geteuid
-            pass
+        # try:
+        #     if os.getuid() == 0 or os.geteuid() == 0:
+        #         prompt = raw_input("Are you sure you want to run as root? [Y/N]")
+        #         if prompt.lower() not in ['y', 'yes']:
+        #             stderr('Aborting bot run')
+        #             sys.exit(1)
+        # except AttributeError:
+        #     # Windows doesn't have os.getuid/os.geteuid
+        #     pass
 
         if opts.version:
             py_ver = '%s.%s.%s' % (sys.version_info.major,
