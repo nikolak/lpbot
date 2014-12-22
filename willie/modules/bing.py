@@ -43,67 +43,80 @@ def search_bing(query, api_key, search_type="Web"):
     api_base = "https://api.datamarket.azure.com/Bing/Search/v1/"
     api_query = "{s_type}?Query='{query}'&$format=json&$top={results}"
 
-    results = 1
+    r_to_show = 1
     request_keymap = {"'": '%27',
                       '"': '%27',
                       '+': '%2b',
                       ' ': '%20',
                       ':': '%3a', }
 
-    if not query:
-        return "No query specified"
+    _args = query.split()
 
-    if query.find("results") != -1:
-        r_index = query.find("results")
-        r_string = query[r_index - 2:r_index].rstrip()
+    if not _args:
+        return "No search query specified"
 
+    if len(_args) >= 3:
+        # Additional parameters may be here, if the string is less than 3
+        # items long we can be sure it doesn't contain anything additional
+        # other than query, since query and one option would be 3 items
         try:
-            r_string = int(r_string)
-            if r_string < 1 or r_string > 3:
-                raise ValueError
+            results_number_index = _args.index("--results")
+            results_number_value = _args[results_number_index + 1]
 
-            results = r_string
-            query = query.replace("{} results".format(results), "")
-        except ValueError:
+            _args.pop(results_number_index)
+            _args.pop(results_number_index)
+
+            results_number_value = int(results_number_value)
+
+            if results_number_value < 1 or results_number_value > 3:
+                raise ValueError("Invalid value for --results, n<1 or n>3")
+
+            r_to_show = results_number_value
+        except:
             pass
 
-    query_url = api_query.format(s_type=search_type, query=query, results=results)
+    query = " ".join(_args)
+
+    query_url = api_query.format(s_type=search_type, query=query, results=r_to_show)
 
     for key, value in request_keymap.items():
         query_url = query_url.replace(key, value)
 
     r = requests.get(api_base + query_url, auth=(api_key, api_key))
 
-    search_results = None
-    if r.status_code == 200:
-        try:
-            search_results = r.json()['d']['results']
-        except:
-            return "Something went wrong while converting result to json"
+    if r.status_code != 200:
+        return "Error: Bing search failed; status {}".format(r.status_code)
 
-    if not search_results:
-        return "[bing] :: Nothing found"
+    try:
+        bjson = r.json()['d']['results']
+    except:
+        return "Error: Bing did not return a valid json"
 
-    message = u"[bing] :: "
-    if results > 1:
-        for num in range(results):
-            try:
-                message += u"{} - {} :: ".format(num + 1, search_results[num]['Url'])
-            except:
-                message += u"{} - Not found :: ".format(num + 1)
+    if not bjson:
+        return "Nothing found"
+
+
+    msg = u"[bing] :: "
+    if r_to_show == 1:
+        result = bjson[0]
+        msg += u"{title} - {url} :: {desc}".format(title=result['Title'],
+                                                  url=result['Url'],
+                                                  desc=result['Description'])
     else:
-        message += u"{} - {} :: {}".format(search_results[0]['Title'],
-                                           search_results[0]['Url'],
-                                           search_results[0]['Description'])
+        for i in range(r_to_show):
+            result = bjson[i]
+            msg += u"{num} - {url} :: ".format(num=i + 1, url=result['Url'])
 
-    return message
+    return msg
 
-
-@commands('bing', 'search', 'b')
-@example('.bing microsoft windows')
+@commands('bing', 'b')
+@example('.bing microsoft windows [--results 3]')
 def bing(bot, trigger):
     """Replies with results from bing API"""
     api_key = checkConfig(bot)
+
+    if not api_key:
+        return
 
     query = trigger.group(2)
     try:
