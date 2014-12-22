@@ -35,13 +35,14 @@ def version(bot, trigger):
     release = willie.__version__
     sha = git_info()
     if not sha:
-        msg = 'Willie v. ' + release
+        msg = 'Version: ' + release
         if release[-4:] == '-git':
             msg += ' at unknown commit.'
         bot.reply(msg)
         return
 
-    bot.reply("Willie v. {} at commit: {}".format(willie.__version__, sha))
+    msg = "Version: {} at commit: {}".format(willie.__version__, sha)
+    bot.reply(msg+" | GitHub: https://github.com/Nikola-K/lpbot")
 
 
 @willie.module.rule('\x01VERSION\x01')
