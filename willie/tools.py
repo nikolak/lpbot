@@ -9,7 +9,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import time
 import numbers
 import datetime
 import sys
@@ -23,6 +22,7 @@ try:
 except:
     pytz = False
 import traceback
+
 try:
     import Queue
 except ImportError:
@@ -32,6 +32,7 @@ import copy
 import ast
 import operator
 import codecs
+
 if sys.version_info.major >= 3:
     unicode = str
     iteritems = dict.items
@@ -43,71 +44,6 @@ else:
     iterkeys = dict.iterkeys
 
 _channel_prefixes = ('#', '&', '+', '!')
-
-
-class ExpressionEvaluator:
-    """A generic class for evaluating limited forms of Python expressions.
-
-    Instances can overwrite binary_ops and unary_ops attributes with dicts of
-    the form {ast.Node, function}. When the ast.Node being used as key is
-    found, it will be evaluated using the given function.
-
-    """
-
-    class Error(Exception):
-        pass
-
-    def __init__(self, bin_ops=None, unary_ops=None):
-        self.binary_ops = bin_ops or {}
-        self.unary_ops = unary_ops or {}
-
-    def __call__(self, expression_str, timeout=5.0):
-        """Evaluate a python expression and return the result.
-
-        Raises:
-            SyntaxError: If the given expression_str is not a valid python
-                statement.
-            ExpressionEvaluator.Error: If the instance of ExpressionEvaluator
-                does not have a handler for the ast.Node.
-
-        """
-        ast_expression = ast.parse(expression_str, mode='eval')
-        return self._eval_node(ast_expression.body, time.time() + timeout)
-
-    def _eval_node(self, node, timeout):
-        """Recursively evaluate the given ast.Node.
-
-        Uses self.binary_ops and self.unary_ops for the implementation.
-
-        A subclass could overwrite this to handle more nodes, calling it only
-        for nodes it does not implement it self.
-
-        Raises:
-            ExpressionEvaluator.Error: If it can't handle the ast.Node.
-
-        """
-        if isinstance(node, ast.Num):
-            return node.n
-
-        elif (isinstance(node, ast.BinOp) and
-                type(node.op) in self.binary_ops):
-            left = self._eval_node(node.left, timeout)
-            right = self._eval_node(node.right, timeout)
-            if time.time() > timeout:
-                raise ExpressionEvaluator.Error(
-                    "Time for evaluating expression ran out.")
-            return self.binary_ops[type(node.op)](left, right)
-
-        elif (isinstance(node, ast.UnaryOp) and
-                type(node.op) in self.unary_ops):
-            operand = self._eval_node(node.operand, timeout)
-            if time.time() > timeout:
-                raise ExpressionEvaluator.Error(
-                    "Time for evaluating expression ran out.")
-            return self.unary_ops[type(node.op)](operand)
-
-        raise ExpressionEvaluator.Error(
-            "Ast.Node '%s' not implemented." % (type(node).__name__,))
 
 
 def guarded_mul(left, right):
@@ -220,6 +156,7 @@ class EquationEvaluator(ExpressionEvaluator):
 
         return result
 
+
 eval_equation = EquationEvaluator()
 """Evaluates a Python equation expression and returns the result.
 
@@ -273,13 +210,14 @@ def get_command_regexp(prefix, command):
 
 def deprecate_for_5(thing):
     warnings.warn(thing + 'will be removed in Willie 5.0. Please see '
-                  'http://willie.dftba.net/willie_5.html for more info.')
+                          'http://willie.dftba.net/willie_5.html for more info.')
 
 
 def deprecated_5(old):
     def new(*args, **kwargs):
         deprecate_for_5(old.__name__)
         return old(*args, **kwargs)
+
     new.__doc__ = old.__doc__
     new.__name__ = old.__name__
     return new
@@ -292,6 +230,7 @@ def deprecated(old):
         for line in traceback.format_list(trace[:-1]):
             stderr(line[:-1])
         return old(*args, **kwargs)
+
     new.__doc__ = old.__doc__
     new.__name__ = old.__name__
     return new
@@ -299,6 +238,7 @@ def deprecated(old):
 
 class PriorityQueue(Queue.PriorityQueue):
     """A priority queue with a peek method."""
+
     def peek(self):
         """Return a copy of the first element without removing it."""
         self.not_empty.acquire()
@@ -314,6 +254,7 @@ class PriorityQueue(Queue.PriorityQueue):
 
 class released(object):
     """A context manager that releases a lock temporarily."""
+
     def __init__(self, lock):
         self.lock = lock
 
@@ -328,7 +269,6 @@ class released(object):
 # http://parand.com/say/index.php/2007/07/13/simple-multi-dimensional-dictionaries-in-python/
 # A simple class to make mutli dimensional dict easy to use
 class Ddict(dict):
-
     """Class for multi-dimensional ``dict``.
 
     A simple helper class to ease the creation of multi-dimensional ``dict``\s.
@@ -421,7 +361,6 @@ class Identifier(unicode):
 
 
 class OutputRedirect:
-
     """Redirect te output to the terminal and a log file.
 
     A simplified object used to write to both the terminal and a log file.
@@ -463,7 +402,7 @@ class OutputRedirect:
                 logfile.write(unicode(string, 'utf8', errors="replace"))
 
 
-#These seems to trace back to when we thought we needed a try/except on prints,
+# These seems to trace back to when we thought we needed a try/except on prints,
 #because it looked like that was why we were having problems. We'll drop it in
 #4.0
 @deprecated
@@ -604,7 +543,6 @@ def get_hostmask_regex(mask):
 
 
 class WillieMemory(dict):
-
     """A simple thread-safe dict implementation.
 
     *Availability: 4.0; available as ``Willie.WillieMemory`` in 3.1.0 - 3.2.0*
@@ -614,6 +552,7 @@ class WillieMemory(dict):
     ``__setitem__`` and ``contains``.
 
     """
+
     def __init__(self, *args):
         dict.__init__(self, *args)
         self.lock = threading.Lock()
@@ -646,6 +585,7 @@ class WillieMemory(dict):
 
 class WillieMemoryWithDefault(defaultdict):
     """Same as WillieMemory, but subclasses from collections.defaultdict."""
+
     def __init__(self, *args):
         defaultdict.__init__(self, *args)
         self.lock = threading.Lock()
