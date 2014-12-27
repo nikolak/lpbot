@@ -6,11 +6,11 @@
 
 from __future__ import unicode_literals
 
-from willie import web
-from willie.module import commands, example, NOLIMIT
-
 import feedparser
 from lxml import etree
+
+from willie import web
+from willie.module import commands, example, NOLIMIT
 
 
 def woeid_search(query):
@@ -162,16 +162,25 @@ def update_woeid(bot, trigger):
     if first_result is None:
         return bot.reply("I don't know where that is.")
 
-    woeid = first_result.find('woeid').text
+    try:
+        woeid = first_result.find('woeid').text
+
+        if not woeid:
+            raise ValueError("Invalid WOEID")
+    except:
+        bot.reply("Could not get a valid WOEID for that location")
+        return
 
     bot.db.set_nick_value(trigger.nick, 'woeid', woeid)
 
-    neighborhood = first_result.find('neighborhood').text or ''
-    if neighborhood:
-        neighborhood += ','
-    city = first_result.find('city').text or ''
-    state = first_result.find('state').text or ''
-    country = first_result.find('country').text or ''
-    uzip = first_result.find('uzip').text or ''
-    bot.reply('I now have you at WOEID %s (%s %s, %s, %s %s.)' %
-              (woeid, neighborhood, city, state, country, uzip))
+    response_data = {}
+    for property in ['neighborhood', 'city', 'state', 'country', 'uzip']:
+        try:
+            value = first_result.find(property).text
+            if value:
+                response_data[property] = value
+        except:
+            pass
+
+    bot.reply("I now have you at WOEID {} ({})".format(woeid,
+                                                       ", ".join(response_data.values())))
