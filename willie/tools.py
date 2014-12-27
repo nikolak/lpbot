@@ -125,45 +125,6 @@ def guarded_pow(left, right):
     return operator.pow(left, right)
 
 
-class EquationEvaluator(ExpressionEvaluator):
-    __bin_ops = {
-        ast.Add: operator.add,
-        ast.Sub: operator.sub,
-        ast.Mult: guarded_mul,
-        ast.Div: operator.truediv,
-        ast.Pow: guarded_pow,
-        ast.Mod: operator.mod,
-        ast.FloorDiv: operator.floordiv,
-        ast.BitXor: guarded_pow
-    }
-    __unary_ops = {
-        ast.USub: operator.neg,
-        ast.UAdd: operator.pos,
-    }
-
-    def __init__(self):
-        ExpressionEvaluator.__init__(
-            self,
-            bin_ops=self.__bin_ops,
-            unary_ops=self.__unary_ops
-        )
-
-    def __call__(self, expression_str):
-        result = ExpressionEvaluator.__call__(self, expression_str)
-
-        # This wrapper is here so additional sanity checks could be done
-        # on the result of the eval, but currently none are done.
-
-        return result
-
-
-eval_equation = EquationEvaluator()
-"""Evaluates a Python equation expression and returns the result.
-
-Supports addition (+), subtraction (-), multiplication (*), division (/),
-power (**) and modulo (%).
-"""
-
 
 def get_raising_file_and_line(tb=None):
     """Return the file and line number of the statement that raised the tb.
