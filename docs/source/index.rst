@@ -1,7 +1,7 @@
 .. Willie IRC Bot documentation master file, created by
-   sphinx-quickstart on Sat Jun 16 00:18:40 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+sphinx-quickstart on Sat Jun 16 00:18:40 2012.
+You can adapt this file completely to your liking, but it should at least
+contain the root `toctree` directive.
 
 Introduction
 ============
@@ -76,7 +76,7 @@ only option in versions prior to *4.0*.
         function will execute.
 
     .. py:attribute:: rule
-    
+
         *See also:* :py:func:`willie.module.rule`
 
         A regular expression which will trigger the function. If the Willie
@@ -94,7 +94,7 @@ only option in versions prior to *4.0*.
         simple regular expressions, and are considered deprecated in *3.1*.
 
     .. py:attribute:: event
-    
+
         *See also:* :py:func:`willie.module.event`
 
         This is one of a number of events, such as ``'JOIN'``, ``'PART'``,
@@ -107,7 +107,7 @@ only option in versions prior to *4.0*.
         .. _RFC 1459: http://www.irchelp.org/irchelp/rfc/rfc.html
 
     .. py:attribute:: rate
-    
+
         *Availability: 2+*
         
         *See also:* :py:func:`willie.module.rate`
@@ -119,7 +119,7 @@ only option in versions prior to *4.0*.
         configuration are exempted from rate limits.
         
     .. py:attribute:: priority
-    
+
         *See also:* :py:func:`willie.module.priority`
 
         Priority can be one of ``high``, ``medium``, ``low``. It allows you to
@@ -177,7 +177,7 @@ The ``Willie`` class
 --------------------
 
 .. autoclass:: willie.bot.Willie
-   :members:
+:members:
 
 .. py:function:: reply(text, notice=False)
 
@@ -359,7 +359,7 @@ The ``Willie`` class
     dictionaries, respectively.
 
 .. py:function:: flush_ops(channel)
-    
+
     *Availability: 3+, deprecated in 4.1.0*
     
     Re-initialize  and empty the ``ops`` and ``halfops`` entry for
@@ -379,68 +379,68 @@ The ``Trigger`` class
 .. py:class:: Trigger
  
     .. py:attribute:: sender
-    
+
         The channel (or nick, in a private message) from which the message was
         sent.
     
     .. py:attribute:: nick
-    
+
         The nick of the person who sent the message.
     
     .. py:attribute:: event
-    
+
         The event which triggered the message.
     
     .. py:attribute:: bytes
-    
+
         The line which triggered the message.
     
     .. py:attribute:: match
-    
+
         The regular expression `MatchObject`_ for the triggering line.
 
         .. _MatchObject: http://docs.python.org/library/re.html#match-objects
         .. _re: http://docs.python.org/library/re.html
     
     .. py:attribute:: group
-    
+
         The ``group`` function of the ``match`` attribute.
                 
         See Python `re`_ documentation for details.
     
     .. py:attribute:: groups
-    
+
         The ``groups`` function of the ``match`` attribute.
                 
         See Python `re`_ documentation for details.
     
     .. py:attribute:: args
-    
+
         The arguments given to a command.
     
     .. py:attribute:: admin
-    
+
         True if the nick which triggered the command is in Willie's admin list as
         defined in the config file.
     
     .. py:attribute:: owner
-    
+
         True if the nick which triggered the command is the owner stated in the
         config file.
     
     .. py:attribute:: host
-    
+
         The host which sent the triggering message.
 
     .. py:attribute:: isop
-    
+
         *Availability: 3+, deprecated in 4.1.0*
         
         True if the nick which triggered the command is an op on the channel it was triggered in.
         Will always be False if the command was triggered by a private message
 
     .. py:attribute:: isvoice
-    
+
         *Availability: 3+, deprecated in 4.1.0*
 
         True if the nick which triggered the command is voiced on the channel it was triggered in.
@@ -457,14 +457,14 @@ The ``WillieDB`` class
 ----------------------
 
 .. automodule:: willie.db
-   :members:
+:members:
 
 The ``Config`` class
 --------------------
 
 .. automodule:: willie.config
-   :members:
-   :undoc-members:
+:members:
+       :undoc-members:
 
 Miscellaneous: ``web``, ``tools``, ``module``, ``formatting``
 =============================================================
@@ -475,24 +475,24 @@ willie.web
 ----------
 
 .. automodule:: willie.web
-   :members:
+:members:
 
 willie.tools
 ------------
 
 .. automodule:: willie.tools
-   :members:
+:members:
 
 willie.module
 -------------
 .. automodule:: willie.module
-   :members:
+:members:
 
 willie.formatting
 -----------------
 .. automodule:: willie.formatting
-   :members:
-   :undoc-members:
+:members:
+       :undoc-members:
 
 Indices and tables
 ==================

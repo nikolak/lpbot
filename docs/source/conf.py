@@ -11,15 +11,16 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
+
 parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.sys.path.insert(0,parentdir) 
-from willie import __version__
+os.sys.path.insert(0, parentdir)
+from lpbot import __version__
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+# sys.path.insert(0, os.path.abspath('.'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -173,21 +174,21 @@ htmlhelp_basename = 'willie'
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'willie.tex', u'Willie IRC Bot Documentation',
-   u'E. Powell, et al.', 'manual'),
+    ('index', 'willie.tex', u'Willie IRC Bot Documentation',
+     u'E. Powell, et al.', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -230,9 +231,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'willie', u'Willie IRC Bot Documentation',
-   u'E. Powell, et al.', 'WillieIRCBot', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'willie', u'Willie IRC Bot Documentation',
+     u'E. Powell, et al.', 'WillieIRCBot', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

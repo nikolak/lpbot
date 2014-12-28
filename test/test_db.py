@@ -13,10 +13,10 @@ import sys
 import tempfile
 
 import pytest
+from lpbot.config import Config
+from lpbot.db import WillieDB
+from lpbot.tools import Identifier
 
-from willie.config import Config
-from willie.db import WillieDB
-from willie.tools import Identifier
 
 db_filename = tempfile.mkstemp()[1]
 if sys.version_info.major >= 3:
@@ -117,6 +117,7 @@ def test_set_nick_value(db):
                 [nick_id, key]
             ).fetchone()[0]
             assert json.loads(unicode(found_value)) == value
+
     check()
 
     # Test updates
