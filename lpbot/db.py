@@ -45,6 +45,7 @@ class lpbotDB(object):
         # Do nothing if the db already exists.
         try:
             self.execute('SELECT * FROM nickname;')
+            self.execute('SELECT * FROM rssfeed;')
         except:
             pass
         else:
@@ -52,10 +53,22 @@ class lpbotDB(object):
 
         self.execute(
             """CREATE TABLE `nickname` (
-                `id`	INTEGER PRIMARY KEY,
-                `name`	VARCHAR,
-                `key`	VARCHAR,
-                `key_value`	VARCHAR
+                `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+                `name`	VARCHAR NOT NULL,
+                `key`	VARCHAR NOT NULL,
+                `value`	VARCHAR NOT NULL
+            )"""
+        )
+
+        self.execute(
+            """CREATE TABLE `rssfeed` (
+                `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+                `name`	TEXT,
+                `url`	TEXT NOT NULL,
+                `channel`	TEXT,
+                `enabled`	INTEGER DEFAULT 1,
+                `last_link`	TEXT,
+                `last_pubdate`	TEXT
             )"""
         )
 
@@ -74,7 +87,7 @@ class lpbotDB(object):
     def get_nick_value(self, nick, key):
         """Retrieves the value for a given key associated with a nick."""
         result = self.execute(
-            'SELECT key_value FROM nickname WHERE name = ? AND key = ?',
+            'SELECT value FROM nickname WHERE name = ? AND key = ?',
             [nick.lower(), key]
         ).fetchone()
         if result is not None:
