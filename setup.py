@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from distutils.core import setup
 import tempfile
-import sys
 import os
 import shutil
 
@@ -12,14 +11,12 @@ from lpbot import __version__
 
 
 requires = ['feedparser', 'pytz', 'lxml', 'praw', 'enchant', 'pygeoip']
-if sys.version_info.major < 3:
-    requires.append('backports.ssl_match_hostname')
 
 
 def do_setup():
     try:
-        # This special screwing is to make willie.py get installed to PATH as
-        # willie, not willie.py. Don't remove it, or you'll break it.
+        # This special screwing is to make lpbot.py get installed to PATH as
+        # lpbot, not lpbot.py. Don't remove it, or you'll break it.
         tmp_dir = tempfile.mkdtemp()
         tmp_main_script = os.path.join(tmp_dir, 'lpbot')
         shutil.copy('lpbot.py', tmp_main_script)
@@ -31,7 +28,7 @@ def do_setup():
             author='Nikola Kovacevic',
             author_email='nikolak@outlook.com',
             url='https://github.com/Nikola-K/lpbot',
-            long_description="""lpbot is an IRC bot based on open source willie bot by Edward POWELL""",
+            long_description="""lpbot is an IRC bot based on open source willie bot by Edward Powell""",
             # Distutils is shit, and doesn't check if it's a list of basestring
             # but instead requires str.
             packages=[str('lpbot'), str('lpbot.modules')],
