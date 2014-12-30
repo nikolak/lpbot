@@ -100,7 +100,7 @@ class lpbotDB(object):
             pass
         value = json.dumps(value, ensure_ascii=False)
         self.execute('INSERT OR REPLACE INTO nickname VALUES (?, ?, ?, ?)',
-                     [nick_id, nick, key, value])
+                     [nick_id, nick.lower(), key, value])
 
 
     def get_nick_value(self, nick, key):
@@ -108,7 +108,6 @@ class lpbotDB(object):
         result = self.execute(
             'SELECT value FROM nickname WHERE name = ? AND key = ?',
             [nick.lower(), key]).fetchone()
-        
         if result is not None:
             result = result[0]
         return _deserialize(result)
