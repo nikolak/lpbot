@@ -22,4 +22,4 @@ import time
 @commands('date')
 @example('.date')
 def date(bot, trigger):
-    print(time.strftime("It is %A the %d of %B %Y in the %Z timezone. The time here is currently %H:%M:%S."))
+    bot.reply(time.strftime("It is %A the %d of %B %Y in the %Z timezone. The time here is currently %H:%M:%S."))
