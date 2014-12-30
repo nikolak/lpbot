@@ -19,6 +19,7 @@ from lpbot.module import commands, example, NOLIMIT
 
 import time
 
+
 @commands('date')
 @example('.date')
 def date(bot, trigger):
