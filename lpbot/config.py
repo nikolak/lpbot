@@ -372,7 +372,7 @@ class Config(object):
         if self.core.homedir is not None:
             home_modules_dir = os.path.join(self.core.homedir, 'modules')
         else:
-            home_modules_dir = os.path.join(os.path.expanduser('~'), '.willie',
+            home_modules_dir = os.path.join(os.path.expanduser('~'), '.lpbot',
                                             'modules')
         if not os.path.isdir(home_modules_dir):
             os.makedirs(home_modules_dir)
@@ -411,13 +411,13 @@ class Config(object):
 
 
 def wizard(section, config=None):
-    dotdir = os.path.expanduser('~/.willie')
+    dotdir = os.path.expanduser('~/.lpbot')
     configpath = os.path.join(dotdir, (config or 'default') + '.cfg')
     if section == 'all':
         create_config(configpath)
     elif section == 'db':
         print(
-            'Willie will be moving to an automatically configured sqlite '
+            'lpbot will be moving to an automatically configured sqlite '
             'database in version 5.0. In preparation, the database config '
             'wizard has been disabled. Please note that MySQL and Postgres'
             ' support will be dropped entirely in 5.0. See '
@@ -434,16 +434,16 @@ def wizard(section, config=None):
 
 
 def check_dir(create=True):
-    dotdir = os.path.join(os.path.expanduser('~'), '.willie')
+    dotdir = os.path.join(os.path.expanduser('~'), '.lpbot')
     if not os.path.isdir(dotdir):
         if create:
-            print('Creating a config directory at ~/.willie...')
+            print('Creating a config directory at ~/.lpbot...')
             try:
                 os.makedirs(dotdir)
             except Exception as e:
                 print('There was a problem creating %s:' % dotdir, file=sys.stderr)
                 print('%s, %s' % (e.__class__, str(e)), file=sys.stderr)
-                print('Please fix this and then run Willie again.', file=sys.stderr)
+                print('Please fix this and then run lpbot again.', file=sys.stderr)
                 sys.exit(1)
         else:
             print("No config file found. Please make one before configuring these options.")
