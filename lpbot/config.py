@@ -450,6 +450,7 @@ def check_dir(create=True):
             sys.exit(1)
 
 
+# noinspection PyUnreachableCode
 def create_config(configpath):
     check_dir()
     print("Please answer the following questions" +
