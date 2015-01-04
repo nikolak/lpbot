@@ -46,7 +46,6 @@ class lpbotDB(object):
         try:
             self.execute('SELECT * FROM nickname;')
             self.execute('SELECT * FROM rssfeed;')
-            self.execute('SELECT * FROM redditfeed')
         except:
             pass
         else:
@@ -68,18 +67,7 @@ class lpbotDB(object):
                 `url`	TEXT NOT NULL,
                 `channel`	TEXT,
                 `enabled`	INTEGER DEFAULT 1,
-                `last_link`	TEXT,
-                `last_pubdate`	TEXT
-            )"""
-        )
-
-        self.execute(
-            """CREATE TABLE `redditfeed` (
-                `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
-                `url`	TEXT NOT NULL,
-                `channel`	TEXT,
-                `enabled`	INTEGER DEFAULT 1,
-                `last_thred_id`	TEXT
+                `seen_links`	TEXT,
             )"""
         )
 
