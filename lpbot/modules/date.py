@@ -17,10 +17,21 @@
 from __future__ import unicode_literals
 from lpbot.module import commands, example, NOLIMIT
 
-import time
+from dateutil.tz import tzoffset
+from datetime import datetime
+
 
 
 @commands('date')
-@example('.date')
+@example('.date [utc offset]')
 def date(bot, trigger):
-    bot.reply(time.strftime("It is %A the %d of %B %Y in the %Z timezone. The time here is currently %H:%M:%S."))
+    offset = trigger.group(2)
+
+    if not offset:
+        offset = 0
+    elif offset and offset.isdigit():
+        offset = offset * 60 * 60
+    else:
+        bot.say("Please use correct format: .date -6")
+
+    bot.reply(datetime.now(tzoffset("offset", offset)))
