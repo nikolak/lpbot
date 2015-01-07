@@ -28,7 +28,6 @@ import signal
 from lpbot.__init__ import run, __version__
 from lpbot.config import Config, create_config, ConfigurationError, wizard
 import lpbot.tools as tools
-# import lpbot.web
 
 homedir = os.path.join(os.path.expanduser('~'), '.lpbot')
 
@@ -95,15 +94,13 @@ def main(argv=None):
                             dest="version", help="Show version number and exit")
         opts = parser.parse_args()
 
-        # try:
-        #     if os.getuid() == 0 or os.geteuid() == 0:
-        #         prompt = raw_input("Are you sure you want to run as root? [Y/N]")
-        #         if prompt.lower() not in ['y', 'yes']:
-        #             stderr('Aborting bot run')
-        #             sys.exit(1)
-        # except AttributeError:
-        #     # Windows doesn't have os.getuid/os.geteuid
-        #     pass
+        try:
+            if os.getuid() == 0 or os.geteuid() == 0:
+                stderr("Don't runt he bot as root")
+                sys.exit(1)
+        except AttributeError:
+            # Windows doesn't have os.getuid/os.geteuid
+            pass
 
         if opts.version:
             py_ver = '%s.%s.%s' % (sys.version_info.major,

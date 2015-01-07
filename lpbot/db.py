@@ -91,16 +91,23 @@ class lpbotDB(object):
 
     def set_nick_value(self, nick, key, value):
         """Sets the value for a given key to be associated with the nick."""
+        nick_id = None
+
+        try:
+            row = self.execute('SELECT id FROM nickname WHERE name = ? AND key = ?',[nick.lower(), key]).fetchone()
+            nick_id = row[0]
+        except:
+            pass
         value = json.dumps(value, ensure_ascii=False)
         self.execute('INSERT OR REPLACE INTO nickname VALUES (?, ?, ?, ?)',
-                     [None, nick, key, value])
+                     [nick_id, nick.lower(), key, value])
+
 
     def get_nick_value(self, nick, key):
         """Retrieves the value for a given key associated with a nick."""
         result = self.execute(
             'SELECT value FROM nickname WHERE name = ? AND key = ?',
-            [nick.lower(), key]
-        ).fetchone()
+            [nick.lower(), key]).fetchone()
         if result is not None:
             result = result[0]
         return _deserialize(result)
