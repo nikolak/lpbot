@@ -17,12 +17,12 @@ import lpbot.tools
 from lpbot.config import ConfigurationError
 
 
-MESSAGE_TPL = "{datetime}  <{trigger.nick}> {message}"
-ACTION_TPL = "{datetime}  * {trigger.nick} {message}"
-NICK_TPL = "{datetime}  *** {trigger.nick} is now known as {trigger.sender}"
-JOIN_TPL = "{datetime}  *** {trigger.nick} has joined {trigger}"
-PART_TPL = "{datetime}  *** {trigger.nick} has left {trigger}"
-QUIT_TPL = "{datetime}  *** {trigger.nick} has quit IRC"
+MESSAGE_TPL = "[{time}]  <{trigger.nick}> {message}"
+ACTION_TPL = "[{time}]  * {trigger.nick} {message}"
+NICK_TPL = "[{time}]  *** {trigger.nick} is now known as {trigger.sender}"
+JOIN_TPL = "[{time}]  *** Joins: {trigger.nick} ({trigger.host})"
+PART_TPL = "[{time}]  *** Parts: {trigger.nick} ({trigger.host})"
+QUIT_TPL = "[{time}]  *** Quits: {trigger.nick}"
 
 
 def configure(config):
@@ -65,13 +65,14 @@ def _format_template(tpl, bot, trigger, **kwargs):
         dt = dt.replace(microsecond=0)
 
     formatted = tpl.format(
-        trigger=trigger, datetime=dt.isoformat(),
-        date=dt.date().isoformat(), time=dt.time().isoformat(),
+        trigger=trigger,
+        datetime=dt.isoformat(),
+        date=dt.date().isoformat(),
+        time=dt.time().isoformat(),
         **kwargs
     ) + "\n"
 
-    if sys.version_info.major < 3 and isinstance(formatted, unicode):
-        formatted = formatted.encode('utf-8')
+    formatted = formatted.encode('utf-8')
     return formatted
 
 
