@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import unicode_literals
 from lpbot.module import commands, example, NOLIMIT
 
 from dateutil.tz import tzoffset
@@ -34,4 +33,4 @@ def date(bot, trigger):
     else:
         bot.say("Please use correct format: .date -6")
 
-    bot.reply(datetime.now(tzoffset("offset", offset)))
+    bot.reply(datetime.now(tzoffset("offset", str(offset)))
