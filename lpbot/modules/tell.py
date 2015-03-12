@@ -79,7 +79,7 @@ def setup(self):
 
 @commands('tell', 'ask')
 @nickname_commands('tell', 'ask')
-@example('Willie, tell Embolalia he broke something again.')
+@example('lpbot, tell matt-ex he broke something again.')
 def f_remind(bot, trigger):
     """Give someone a message the next time they're seen"""
     teller = trigger.nick
@@ -108,7 +108,7 @@ def f_remind(bot, trigger):
 
     if not tellee in (Identifier(teller), bot.nick, 'me'):
         tz = lpbot.tools.get_timezone(bot.db, bot.config, None, tellee)
-        timenow = lpbot.tools.format_time(bot.db, bot.config, tz, tellee)
+        timenow = lpbot.tools.format_time(bot.db, bot.config, tz, tellee, channel=trigger.sender)
         bot.memory['tell_lock'].acquire()
         try:
             if not tellee in bot.memory['reminders']:
