@@ -46,13 +46,14 @@ class lpbotDB(object):
         try:
             self.execute('SELECT * FROM nickname;')
             self.execute('SELECT * FROM rssfeed;')
+            self.execute('SELECT * FROM channel_values')
         except:
             pass
         else:
             return
 
         self.execute(
-            """CREATE TABLE `nickname` (
+            """CREATE TABLE IF NOT EXISTS `nickname` (
                 `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
                 `name`	VARCHAR NOT NULL,
                 `key`	VARCHAR NOT NULL,
@@ -61,7 +62,7 @@ class lpbotDB(object):
         )
 
         self.execute(
-            """CREATE TABLE `rssfeed` (
+            """CREATE TABLE IF NOT EXISTS `rssfeed` (
                 `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
                 `name`	TEXT,
                 `url`	TEXT NOT NULL,
@@ -72,7 +73,7 @@ class lpbotDB(object):
         )
 
         self.execute(
-            'CREATE TABLE channel_values '
+            'CREATE TABLE IF NOT EXISTS `channel_values` '
             '(channel STRING, key STRING, value STRING, '
             'PRIMARY KEY (channel, key))'
         )
