@@ -67,7 +67,7 @@ class lpbotDB(object):
                 `url`	TEXT NOT NULL,
                 `channel`	TEXT,
                 `enabled`	INTEGER DEFAULT 1,
-                `seen_links`	TEXT,
+                `seen_links`	TEXT
             )"""
         )
 
