@@ -71,6 +71,29 @@ class lpbotDB(object):
             )"""
         )
 
+        self.execute(
+            'CREATE TABLE channel_values '
+            '(channel STRING, key STRING, value STRING, '
+            'PRIMARY KEY (channel, key))'
+        )
+
+    def set_channel_value(self, channel, key, value):
+        channel = channel.lower()
+        value = json.dumps(value, ensure_ascii=False)
+        self.execute('INSERT OR REPLACE INTO channel_values VALUES (?, ?, ?)',
+                     [channel, key, value])
+
+    def get_channel_value(self, channel, key):
+        """Retrieves the value for a given key associated with a channel."""
+        channel = channel.lower()
+        result = self.execute(
+            'SELECT value FROM channel_values WHERE channel = ? AND key = ?',
+            [channel, key]
+        ).fetchone()
+        if result is not None:
+            result = result[0]
+        return _deserialize(result)
+
     def get_url(self):
         """Returns a URL for the database, usable to connect with SQLAlchemy.
         """
