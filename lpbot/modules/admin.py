@@ -210,6 +210,67 @@ def set_config(bot, trigger):
     setattr(getattr(bot.config, section), option, value)
 
 
+@lpbot.module.commands('ignore')
+@lpbot.module.example('.ignore MysteriousMagent')
+def ignore_user(bot, trigger):
+    if not trigger.is_privmsg:
+        bot.reply("This command only works as a private message.")
+        return
+    if not trigger.admin:
+        bot.reply("This command requires admin priviledges.")
+        return
+
+    if bot.config.has_option('core', 'nick_blocks'):
+        current_blocks = bot.config.core.nick_blocks
+    else:
+        current_blocks = []
+
+    if not current_blocks:
+        current_blocks = []
+
+    user_to_ignore = trigger.group(2)
+    if user_to_ignore in current_blocks:
+        bot.reply("User {} is already being ignored".format(user_to_ignore))
+        return
+
+    current_blocks.append(user_to_ignore.lower())
+
+    setattr(getattr(bot.config, 'core'), 'nick_blocks', ','.join(current_blocks))
+    bot.reply("User {} added to ignore block".format(user_to_ignore))
+
+
+@lpbot.module.commands("unignore")
+@lpbot.module.example('.unignore someone')
+def unignore_user(bot, trigger):
+    if not trigger.is_privmsg:
+        bot.reply("This command only works as a private message.")
+        return
+    if not trigger.admin:
+        bot.reply("This command requires admin priviledges.")
+        return
+
+    if bot.config.has_option('core', 'nick_blocks'):
+        current_blocks = bot.config.core.nick_blocks
+    else:
+        bot.reply("There are no active nick blocks")
+        return
+
+    if not current_blocks:
+        bot.reply("There are no active nick blocks")
+        return
+
+    nickname = trigger.group(2)
+
+    if nickname.lower() not in current_blocks:
+        bot.reply("That username is not ignored")
+        return
+
+    current_blocks.remove(nickname.lower())
+
+    setattr(getattr(bot.config, 'core'), 'nick_blocks', ','.join(current_blocks))
+    bot.reply("User {} removed from ignore list".format(nickname))
+
+
 @lpbot.module.commands('save')
 @lpbot.module.example('.save')
 def save_config(bot, trigger):
