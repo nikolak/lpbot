@@ -67,15 +67,15 @@ class Bot(asynchat.async_chat):
         self.buffer = ''
 
         self.nick = Identifier(config.nick)
-        """Willie's current ``Identifier``. Changing this while Willie is running is
+        """lpbot's current ``Identifier``. Changing this while lpbot is running is
         untested."""
         self.user = config.user
-        """Willie's user/ident."""
+        """lpbot's user/ident."""
         self.name = config.name
-        """Willie's "real name", as used for whois."""
+        """lpbot's "real name", as used for whois."""
 
         self.channels = []
-        """The list of channels Willie is currently in."""
+        """The list of channels lpbot is currently in."""
 
         self.stack = {}
         self.ca_certs = ca_certs
@@ -127,7 +127,7 @@ class Bot(asynchat.async_chat):
             except Exception as e:
                 stderr('There was a problem creating the logs directory.')
                 stderr('%s %s' % (str(e.__class__), str(e)))
-                stderr('Please fix this and then run Willie again.')
+                stderr('Please fix this and then run lpbot again.')
                 os._exit(1)
         f = codecs.open(os.path.join(self.config.core.logdir, 'raw.log'),
                         'a', encoding='utf-8')
@@ -158,8 +158,8 @@ class Bot(asynchat.async_chat):
         ``text``, unlike the items in ``args`` may contain spaces (though this
         constraint is not checked by ``write``).
 
-        In other words, both ``willie.write(('PRIVMSG',), 'Hello, world!')``
-        and ``willie.write(('PRIVMSG', ':Hello, world!'))`` will send
+        In other words, both ``lpbot.write(('PRIVMSG',), 'Hello, world!')``
+        and ``lpbot.write(('PRIVMSG', ':Hello, world!'))`` will send
         ``PRIVMSG :Hello, world!`` to the server.
 
         Newlines and carriage returns ('\\n' and '\\r') are removed before

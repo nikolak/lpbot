@@ -43,7 +43,7 @@ class LpBot(irc.Bot):
     def __init__(self, config):
         irc.Bot.__init__(self, config.core)
         self.config = config
-        """The ``Config`` for the current Willie instance."""
+        """The ``Config`` for the current lpbot instance."""
         self.doc = {}
         """
         A dictionary of command names to their docstring and example, if
@@ -202,7 +202,7 @@ class LpBot(irc.Bot):
 
         def _call(self, func):
             """Wrapper for collecting errors from modules."""
-            # Willie.bot.call is way too specialized to be used instead.
+            # lpbot.bot.call is way too specialized to be used instead.
             try:
                 func(self.bot)
             except Exception:
@@ -343,15 +343,15 @@ class LpBot(irc.Bot):
 
     @staticmethod
     def is_callable(obj):
-        """Return true if object is a willie callable.
+        """Return true if object is a lpbot callable.
 
         Object must be both be callable and have hashable. Furthermore, it must
         have either "commands", "rule" or "interval" as attributes to mark it
-        as a willie callable.
+        as a lpbot callable.
 
         """
         if not callable(obj):
-            # Check is to help distinguish between willie callables and objects
+            # Check is to help distinguish between lpbot callables and objects
             # which just happen to have parameter commands or rule.
             return False
         if (hasattr(obj, 'commands') or
@@ -362,7 +362,7 @@ class LpBot(irc.Bot):
 
     @staticmethod
     def is_shutdown(obj):
-        """Return true if object is a willie shutdown method.
+        """Return true if object is a lpbot shutdown method.
 
         Object must be both be callable and named shutdown.
 
@@ -374,11 +374,11 @@ class LpBot(irc.Bot):
         return False
 
     def register(self, variables):
-        """Register all willie callables.
+        """Register all lpbot callables.
 
-        With the ``__dict__`` attribute from a Willie module, update or add the
+        With the ``__dict__`` attribute from a lpbot module, update or add the
         trigger commands and rules, to allow the function to be triggered, and
-        shutdown methods, to allow the modules to be notified when willie is
+        shutdown methods, to allow the modules to be notified when lpbot is
         quitting.
 
         """
@@ -389,14 +389,14 @@ class LpBot(irc.Bot):
                 self.shutdown_methods.add(obj)
 
     def unregister(self, variables):
-        """Unregister all willie callables in variables, and their bindings.
+        """Unregister all lpbot callables in variables, and their bindings.
 
         When unloading a module, this ensures that the unloaded modules will
         not get called and that the objects can be garbage collected. Objects
         that have not been registered are ignored.
 
         Args:
-        variables -- A list of callable objects from a willie module.
+        variables -- A list of callable objects from a lpbot module.
 
         """
 
@@ -562,11 +562,11 @@ class LpBot(irc.Bot):
                     self.scheduler.add_job(job)
 
     class LpbotWrapper(object):
-        def __init__(self, willie, trigger):
+        def __init__(self, lpbot, trigger):
             # The custom __setattr__ for this class sets the attribute on the
             # original bot object. We don't want that for these, so we set them
             # with the normal __setattr__.
-            object.__setattr__(self, '_bot', willie)
+            object.__setattr__(self, '_bot', lpbot)
             object.__setattr__(self, '_trigger', trigger)
 
         def __dir__(self):
@@ -607,7 +607,7 @@ class LpBot(irc.Bot):
         def __setattr__(self, attr, value):
             return setattr(self._bot, attr, value)
 
-    def call(self, func, willie, trigger):
+    def call(self, func, lpbot, trigger):
         nick = trigger.nick
         if nick not in self.times:
             self.times[nick] = dict()
@@ -627,7 +627,7 @@ class LpBot(irc.Bot):
                 return
 
         try:
-            exit_code = func(willie, trigger)
+            exit_code = func(lpbot, trigger)
         except Exception:
             exit_code = None
             self.error(trigger)
@@ -723,7 +723,7 @@ class LpBot(irc.Bot):
 
     @deprecated_5
     def debug(self, tag, text, level):
-        """Sends an error to Willie's configured ``debug_target``.
+        """Sends an error to lpbot's configured ``debug_target``.
 
         Args:
             tag - What the msg will be tagged as. It is recommended to pass
@@ -784,7 +784,7 @@ class LpBot(irc.Bot):
                 )
 
     def cap_req(self, module_name, capability, failure_callback):
-        """Tell Willie to request a capability when it starts.
+        """Tell lpot to request a capability when it starts.
 
         By prefixing the capability with `-`, it will be ensured that the
         capability is not enabled. Simmilarly, by prefixing the capability with
@@ -804,7 +804,7 @@ class LpBot(irc.Bot):
         The actual capability request to the server is handled after the
         completion of this function. In the event that the server denies a
         request, the `failure_callback` function will be called, if provided.
-        The arguments will be a `Willie` object, and the capability which was
+        The arguments will be a `lpbot` object, and the capability which was
         rejected. This can be used to disable callables which rely on the
         capability.
 

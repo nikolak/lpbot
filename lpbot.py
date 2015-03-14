@@ -63,7 +63,7 @@ def main(argv=None):
         parser.add_argument('-c', '--config', metavar='filename',
                             help='use a specific configuration file')
         parser.add_argument("-d", '--fork', action="store_true",
-                            dest="deamonize", help="Deamonize willie")
+                            dest="deamonize", help="Deamonize lpbot")
         parser.add_argument("-q", '--quit', action="store_true", dest="quit",
                             help="Gracefully quit lpbot")
         parser.add_argument("-k", '--kill', action="store_true", dest="kill",

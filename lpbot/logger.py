@@ -35,7 +35,7 @@ class ChannelOutputFormatter(logging.Formatter):
 def setup_logging(bot):
     level = bot.config.core.logging_level or 'WARNING'
     logging.basicConfig(level=level)
-    logger = logging.getLogger('willie')
+    logger = logging.getLogger('lpbot')
     if bot.config.core.logging_channel:
         handler = IrcLoggingHandler(bot, level)
         handler.setFormatter(ChannelOutputFormatter())
@@ -50,6 +50,6 @@ def get_logger(name=None):
     case is intended for use in Willie's core; modules should call
     `get_logger(__name__)` to get a logger."""
     if name:
-        return logging.getLogger('willie.modules.' + name)
+        return logging.getLogger('lpbot.modules.' + name)
     else:
-        return logging.getLogger('willie')
+        return logging.getLogger('lpbot')

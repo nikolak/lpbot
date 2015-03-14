@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-"""This module is meant to be imported from willie modules.
+"""This module is meant to be imported from lpbot modules.
 
-It defines the following decorators for defining willie callables:
-willie.module.rule
-willie.module.thread
-willie.module.name (deprecated)
-willie.module.commands
-willie.module.nickname_commands
-willie.module.priority
-willie.module.event
-willie.module.rate
-willie.module.example
+It defines the following decorators for defining lpbot callables:
+lpbot.module.rule
+lpbot.module.thread
+lpbot.module.name (deprecated)
+lpbot.module.commands
+lpbot.module.nickname_commands
+lpbot.module.priority
+lpbot.module.event
+lpbot.module.rate
+lpbot.module.example
 """
 # Copyright 2013, Ari Koivula, <ari@koivu.la>
 # Copyright © 2013, Elad Alfassa <elad@fedoraproject.org>
@@ -27,7 +27,7 @@ import lpbot.test_tools
 NOLIMIT = 1
 """Return value for ``callable``\s, which supresses rate limiting for the call.
 
-*Avalability: 4.0+; available as ``Willie.NOLIMIT`` in 3.2*
+*Avalability: 4.0+; available as ``lpbot.NOLIMIT`` in 3.2*
 
 Returning this value means the triggering user will not be
 prevented from triggering the command again within the rate limit. This can
@@ -70,8 +70,8 @@ def interval(*args):
 
     Example:::
 
-        import willie.module
-        @willie.module.interval(5)
+        import lpbot.module
+        @lpbot.module.interval(5)
         def spam_every_5s(bot):
             if "#here" in bot.channels:
                 bot.msg("#here", "It has been five seconds!")
@@ -96,7 +96,7 @@ def rule(value):
     Args:
         value: A regular expression which will trigger the function.
 
-    If the Willie instance is in a channel, or sent a PRIVMSG, where a string
+    If the lpbot instance is in a channel, or sent a PRIVMSG, where a string
     matching this expression is said, the function will execute. Note that
     captured groups here will be retrievable through the Trigger object later.
 
@@ -259,7 +259,7 @@ def event(*event_list):
     """Decorator. Equivalent to func.event = value.
 
     This is one of a number of events, such as 'JOIN', 'PART', 'QUIT', etc.
-    (More details can be found in RFC 1459.) When the Willie bot is sent one of
+    (More details can be found in RFC 1459.) When the lpbot bot is sent one of
     these events, the function will execute. Note that functions with an event
     must also be given a rule to match (though it may be '.*', which will
     always match) or they will not be triggered.
@@ -283,7 +283,7 @@ def rate(value):
     This limits the frequency with which a single user may use the function. If
     a function is given a rate of 20, a single user may only use that function
     once every 20 seconds. This limit applies to each user individually. Users
-    on the admin list in Willie’s configuration are exempted from rate limits.
+    on the admin list in lpbot’s configuration are exempted from rate limits.
 
     """
 
