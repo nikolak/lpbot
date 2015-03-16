@@ -17,12 +17,12 @@ import lpbot.tools
 from lpbot.config import ConfigurationError
 
 
-MESSAGE_TPL = "[{time}]  <{trigger.nick}> {message}"
-ACTION_TPL = "[{time}]  * {trigger.nick} {message}"
-NICK_TPL = "[{time}]  *** {trigger.nick} is now known as {trigger.sender}"
-JOIN_TPL = "[{time}]  *** Joins: {trigger.nick} ({trigger.host})"
-PART_TPL = "[{time}]  *** Parts: {trigger.nick} ({trigger.host})"
-QUIT_TPL = "[{time}]  *** Quits: {trigger.nick}"
+MESSAGE_TPL = "[{time}] <{trigger.nick}> {message}"
+ACTION_TPL = "[{time}] * {trigger.nick} {message}"
+NICK_TPL = "[{time}] *** {trigger.nick} is now known as {trigger.sender}"
+JOIN_TPL = "[{time}] *** Joins: {trigger.nick} ({trigger.host})"
+PART_TPL = "[{time}] *** Parts: {trigger.nick} ({trigger.host})"
+QUIT_TPL = "[{time}] *** Quits: {trigger.nick}"
 
 
 def configure(config):
