@@ -50,10 +50,11 @@ def get_fpath(bot, trigger, channel=None):
     channel = channel.lstrip("#")
 
     dt = datetime.utcnow()
+    day_log_dt = dt.date().isoformat().replace('-', '')
     if not bot.config.chanlogs.microseconds:
         dt = dt.replace(microsecond=0)
     if bot.config.chanlogs.by_day:
-        fname = "{channel}-{date}.log".format(channel=channel, date=dt.date().isoformat())
+        fname = "{channel}_{date}.log".format(channel=channel, date=day_log_dt)
     else:
         fname = "{channel}.log".format(channel=channel)
     return os.path.join(basedir, fname)
