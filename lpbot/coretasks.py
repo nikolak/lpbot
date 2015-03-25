@@ -389,9 +389,9 @@ def recieve_cap_ls_reply(bot, trigger):
         if prefix != '=' or cap in bot.server_capabilities:
             # REQs fail as a whole, so we send them one capability at a time
             bot.write(('CAP', 'REQ', entry[0] + cap))
-        elif req[2]:
+        elif reqs[2]:
             # Server is going to fail on it, so we call the failure function
-            req[2](bot, entry[0] + cap)
+            reqs[2](bot, entry[0] + cap)
 
     # If we want to do SASL, we have to wait before we can send CAP END. So if
     # we are, wait on 903 (SASL successful) to send it.
