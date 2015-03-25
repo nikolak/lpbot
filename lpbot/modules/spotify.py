@@ -180,3 +180,15 @@ def catch_spotify_url(bot, trigger, match=None):
 
     if msg:
         bot.say("[Spotify] " + msg)
+
+
+@commands('spotify')
+@example('.spotify voodoo people')
+@example('.spotify artist:the prodigy')
+def search_spotify(bot, trigger):
+    query = trigger.group(2)
+    if query:
+        msg = _search_spotify(query)
+
+    if msg:
+        bot.say("[Spotify] " + msg)
