@@ -2,10 +2,10 @@
 """
 *Availability: 3+ for all functions; attributes may vary.*
 
-The config class is an abstraction class for accessing the active Willie
+The config class is an abstraction class for accessing the active lpbot
 configuration file.
 
-The Willie config file is divided to sections, and each section contains keys
+The lpbot config file is divided to sections, and each section contains keys
 and values. A section is an attribute of the config class, and is of type
 ``ConfigSection``. Each section contains the keys as attributes. For example,
 if you want to access key example from section test, use
@@ -13,7 +13,7 @@ if you want to access key example from section test, use
 parser, regardless of whether they are upper-case in the file.
 
 The ``core`` section will always be present, and contains configuration used by
-the Willie core. Modules are allowed to read those, but must not change them.
+the lpbot core. Modules are allowed to read those, but must not change them.
 
 The config file can store strings, booleans and lists. If you need to store a
 number, cast it to ``int()`` when reading.
@@ -24,7 +24,7 @@ name of the section, because this behavior might be removed in the future.
 
 Running the ``config.py`` file directly will give the user an interactive
 series of dialogs to create the configuration file. This will guide the user
-through creating settings for the Willie core, the settings database, and any
+through creating settings for the lpbot core, the settings database, and any
 modules which have a configuration function.
 
 The configuration function, if used, must be declared with the signature
@@ -114,10 +114,10 @@ class Config(object):
             if not self.parser.has_option('core', 'port'):
                 self.parser.set('core', 'port', '6667')
             if not self.parser.has_option('core', 'user'):
-                self.parser.set('core', 'user', 'willie')
+                self.parser.set('core', 'user', 'lpbot')
             if not self.parser.has_option('core', 'name'):
                 self.parser.set('core', 'name',
-                                'Willie Embosbot, http://willie.dftba.net')
+                                'lpbot IRC bot')
             if not self.parser.has_option('core', 'prefix'):
                 self.parser.set('core', 'prefix', r'\.')
             if not self.parser.has_option('core', 'admins'):
@@ -304,9 +304,9 @@ class Config(object):
 
     def _core(self):
         self.interactive_add('core', 'nick', 'Enter the nickname for your bot',
-                             'Willie')
+                             'lpbot')
         self.interactive_add('core', 'host', 'Enter the server to connect to',
-                             'irc.dftba.net')
+                             'irc.freenode.net')
         self.add_option('core', 'use_ssl', 'Should the bot connect with SSL')
         if self.use_ssl == 'True':
             default_port = '6697'
@@ -352,7 +352,7 @@ class Config(object):
         specified in the `core.extra` attribute of the `config` object. If two
         modules have the same name, the last one to be found will be returned
         and the rest will be ignored. Modules are found starting in the regular
-        directory, followed by `~/.willie/modules`, and then through the extra
+        directory, followed by `~/.lpbot/modules`, and then through the extra
         directories in the order that the are specified.
 
         If `show_all` is given as `True`, the `enable` and `exclude`
@@ -368,7 +368,7 @@ class Config(object):
         for fn in os.listdir(modules_dir):
             if fn.endswith('.py') and not fn.startswith('_'):
                 modules[fn[:-3]] = os.path.join(modules_dir, fn)
-        # Next, look in ~/.willie/modules
+        # Next, look in ~/.lpbot/modules
         if self.core.homedir is not None:
             home_modules_dir = os.path.join(self.core.homedir, 'modules')
         else:
