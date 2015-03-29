@@ -24,7 +24,7 @@ import re
 from lpbot.module import commands, example, rule
 from lpbot import tools
 
-http_url_regex = "http://open.spotify.com/(\w+)/(\S+)"
+http_url_regex = "https?://open.spotify.com/(\w+)/(\S+)"
 spotify_uri_regex = "spotify:(\w+):(\S+)"
 http_regex = re.compile(http_url_regex)
 uri_regex = re.compile(spotify_uri_regex)
