@@ -41,6 +41,20 @@ def shutdown(bot):
     del bot.memory['url_callbacks'][http_regex]
     del bot.memory['url_callbacks'][uri_regex]
 
+def _milliseconds_to_hms(milliseconds):
+    """Takes a number of milliseconds and turns it into hours, minutes and seconds
+
+    Args:
+        milliseconds: (int) number of milliseconds to convert
+
+    Returns:
+        A tuple (hours, minutes, seconds)
+    """
+
+    seconds, _ = divmod(milliseconds, 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return (hours, minutes, seconds)
 
 def _search_spotify(query):
     """
@@ -87,11 +101,12 @@ def _search_spotify(query):
     spotify = spotify['items'][0]
     if category == "track":
         return_msg = "[track] {artist} - {track} [{album}] ({duration}) - {url}"
+        duration = _milliseconds_to_hms(spotify['duration_ms'])
         values = {
             'artist': spotify['artists'][0]['name'],
             'track': spotify['name'],
             'album': spotify['album']['name'],
-            'duration': str(datetime.timedelta(milliseconds=spotify['duration_ms'])),
+            'duration': '{:02d}:{:02d}:{:02d}'.format(*duration),
             'url': spotify['external_urls']['spotify']
         }
 
