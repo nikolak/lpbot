@@ -101,7 +101,7 @@ def _search_spotify(query):
     spotify = spotify['items'][0]
     if category == "track":
         return_msg = "[track] {artist} - {track} [{album}] ({duration}) - {url}"
-        duration = _milliseconds_to_hms(spotify['duration_ms']
+        duration = _milliseconds_to_hms(spotify['duration_ms'])
         values = {
             'artist': spotify['artists'][0]['name'],
             'track': spotify['name'],
