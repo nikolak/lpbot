@@ -73,8 +73,8 @@ def issue_info(bot, trigger, match=None):
     data = raw.json()
 
     try:
-        if data['body'] == "":
-            body = '\x29No description provided.\x29'
+        if len(data['body']) == 0:
+            body = '\x29No description provided\x29'
 
             if len(data['body'].split('\n')) > 1:
                 body = data['body'].split('\n')[0] + '...'
@@ -85,4 +85,4 @@ def issue_info(bot, trigger, match=None):
 
         return NOLIMIT
 
-    bot.say('%s [#%s] \x02%s |\x02 %s \x02| Status:\x02 %s' % (match.group(1), data['number'], data['title'], body, data['state']))
+    bot.say('%s [#%s] \x02 %s |\x02 %s \x02| Status:\x02 %s' % (match.group(1), data['number'], data['title'], body, data['state']))
