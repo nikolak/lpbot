@@ -39,15 +39,18 @@ def configure(config):
     | repo | embolalia/willie | The GitHub repo you're working from. |
     """
     chunk = ''
+
     if config.option('Configuring github issue reporting and searching module', False):
         config.interactive_add('github', 'oauth_token', 'Github API Oauth2 token', '')
         config.interactive_add('github', 'repo', 'Github repository', 'nikolak/lpbot')
+
     return chunk
 
 
 def setup(bot):
     if not bot.memory.contains('url_callbacks'):
         bot.memory['url_callbacks'] = tools.lpbotMemory()
+
     bot.memory['url_callbacks'][regex] = issue_info
 
 
@@ -64,14 +67,22 @@ def issue_info(bot, trigger, match=None):
         raw = requests.get(URL)
     except HTTPError:
         bot.say('The GitHub API returned an error.')
+
         return NOLIMIT
+
     data = raw.json()
+
     try:
-        if len(data['body'].split('\n')) > 1:
-            body = data['body'].split('\n')[0] + '...'
-        else:
-            body = data['body'].split('\n')[0]
+        if len(data['body']) == 0:
+            body = '\x29No description provided\x29'
+
+            if len(data['body'].split('\n')) > 1:
+                body = data['body'].split('\n')[0] + '...'
+            else:
+                body = data['body'].split('\n')[0]
     except (KeyError):
         bot.say('The API says this is an invalid issue. Please report this if you know it\'s a correct link!')
+
         return NOLIMIT
-    bot.say('[#%s]\x02title:\x02 %s \x02|\x02 %s' % (data['number'], data['title'], body))
+
+    bot.say('%s [#%s] \x02 %s |\x02 %s \x02| Status:\x02 %s' % (match.group(1), data['number'], data['title'], body, data['state']))
