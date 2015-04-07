@@ -155,11 +155,12 @@ def get_spotify_info(category, spotify_id):
 
     elif category == 'track':
         return_msg = "[track] {artist} - {track} [{album}] ({duration})"
+        duration = _milliseconds_to_hms(spotify['duration_ms'])
         values = {
             'artist': spotify['artists'][0]['name'],
             'track': spotify['name'],
             'album': spotify['album']['name'],
-            'duration': str(datetime.timedelta(milliseconds=spotify['duration_ms'])),
+            'duration': '{:02d}:{:02d}:{:02d}'.format(*duration),
             'url': spotify['external_urls']['spotify']
         }
         return return_msg.format(**values)
