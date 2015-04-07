@@ -75,7 +75,7 @@ def issue_info(bot, trigger, match=None):
     try:
         if len(data['body']) == 0:
             body = '\x29No description provided\x29'
-
+        else:
             if len(data['body'].split('\n')) > 1:
                 body = data['body'].split('\n')[0] + '...'
             else:
