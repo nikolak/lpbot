@@ -73,7 +73,7 @@ def issue_info(bot, trigger, match=None):
     data = raw.json()
 
     try:
-        if len(data['body']) == "":
+        if data['body'] == "":
             body = '\x29No description provided.\x29'
 
             if len(data['body'].split('\n')) > 1:
