@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 import re
 import requests
 import urllib
-import HTMLParser
+import html.parser
 
 from lpbot.module import commands, example
 
@@ -35,14 +35,14 @@ def wa(bot, trigger):
 
     if answer:
         answer = answer.decode('unicode_escape')
-        answer = HTMLParser.HTMLParser().unescape(answer)
+        answer = html.parser.HTMLParser().unescape(answer)
         # This might not work if there are more than one instance of escaped
         # unicode chars But so far I haven't seen any examples of such output
         # examples from Wolfram Alpha
         match = re.search('\\\:([0-9A-Fa-f]{4})', answer)
         if match is not None:
             char_code = match.group(1)
-            char = unichr(int(char_code, 16))
+            char = chr(int(char_code, 16))
             answer = answer.replace('\:' + char_code, char)
         waOutputArray = answer.split(";")
         if (len(waOutputArray) < 2):
