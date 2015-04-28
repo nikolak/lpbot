@@ -70,7 +70,6 @@ def _format_template(tpl, bot, trigger, **kwargs):
         **kwargs
     ) + "\n"
 
-    formatted = formatted.encode('utf-8')
     return formatted
 
 
