@@ -9,7 +9,7 @@
 from __future__ import unicode_literals
 import requests
 import re
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 from lpbot import tools
 from lpbot.module import rule, commands, example
