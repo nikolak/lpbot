@@ -3,7 +3,6 @@
 # Author: Edward Powell, embolalia.net
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 
-from __future__ import unicode_literals
 
 import re
 
@@ -66,7 +65,7 @@ def rpost_info(bot, trigger, match=None):
     else:
         point_color = colors.RED
 
-    percent = color(unicode(int(s.upvote_ratio * 100)) + '%', point_color)
+    percent = color(str(int(s.upvote_ratio * 100)) + '%', point_color)
 
     message = message.format(
         title=s.title, link=link, nsfw=nsfw, points=s.score, percent=percent,

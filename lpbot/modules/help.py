@@ -5,8 +5,6 @@
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-
 from lpbot.module import commands, rule, example, priority
 from lpbot.tools import iterkeys
 

@@ -6,7 +6,7 @@
 
 from __future__ import unicode_literals
 
-from lxml import etree
+import xml.etree as etree
 import re
 import requests
 

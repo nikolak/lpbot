@@ -3,7 +3,6 @@
 # Author: Edward Powell http://embolalia.net
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 
-from __future__ import unicode_literals
 import requests
 
 from lpbot.module import commands

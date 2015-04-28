@@ -14,11 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import unicode_literals
 from collections import OrderedDict
 import requests
 import urllib
-import datetime
 import re
 
 from lpbot.module import commands, example, rule

@@ -3,8 +3,6 @@
 # Copyright © 2013, Elad Alfassa, <elad@fedoraproject.org>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-
 from lpbot.module import commands, example
 
 

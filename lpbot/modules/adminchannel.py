@@ -6,8 +6,6 @@
 # Licensed under the Eiffel Forum License 2.
 
 
-from __future__ import unicode_literals
-
 import re
 
 from lpbot import formatting

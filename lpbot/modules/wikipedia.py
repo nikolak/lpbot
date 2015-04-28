@@ -3,7 +3,6 @@
 # Copyright 2013 Edward Powell - embolalia.net
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
 import requests
 import re
 

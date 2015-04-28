@@ -3,8 +3,6 @@
 # Copyright 2013, Ari Koivula, <ari@koivu.la>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-
 import random
 import sys
 

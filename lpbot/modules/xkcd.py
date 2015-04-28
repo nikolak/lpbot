@@ -6,8 +6,6 @@
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-
 import random
 import re
 import requests

@@ -5,9 +5,8 @@
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
 import urllib
-from lxml import etree
+import lxml.etree as etree
 import requests
 
 import feedparser

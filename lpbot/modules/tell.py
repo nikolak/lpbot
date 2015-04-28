@@ -3,8 +3,6 @@
 # Copyright 2008, Sean B. Palmer, inamidst.com
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-
 import os
 import time
 import threading

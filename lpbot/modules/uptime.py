@@ -3,8 +3,6 @@
 # Copyright 2014, Fabian Neundorf
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-
 import datetime
 
 from lpbot.module import commands
