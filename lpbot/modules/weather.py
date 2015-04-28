@@ -5,7 +5,7 @@
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 # Licensed under the Eiffel Forum License 2.
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import lxml.etree as etree
 import requests
 
@@ -53,7 +53,7 @@ def get_temp(parsed):
     except (KeyError, ValueError):
         return 'unknown'
     f = round((temp * 1.8) + 32, 2)
-    return (u'%d\u00B0C (%d\u00B0F)' % (temp, f))
+    return ('%d\u00B0C (%d\u00B0F)' % (temp, f))
 
 
 def get_humidity(parsed):
@@ -102,21 +102,21 @@ def get_wind(parsed):
         description = 'Hurricane'
 
     if (degrees <= 22.5) or (degrees > 337.5):
-        degrees = u'\u2191'
+        degrees = '\u2191'
     elif (degrees > 22.5) and (degrees <= 67.5):
-        degrees = u'\u2197'
+        degrees = '\u2197'
     elif (degrees > 67.5) and (degrees <= 112.5):
-        degrees = u'\u2192'
+        degrees = '\u2192'
     elif (degrees > 112.5) and (degrees <= 157.5):
-        degrees = u'\u2198'
+        degrees = '\u2198'
     elif (degrees > 157.5) and (degrees <= 202.5):
-        degrees = u'\u2193'
+        degrees = '\u2193'
     elif (degrees > 202.5) and (degrees <= 247.5):
-        degrees = u'\u2199'
+        degrees = '\u2199'
     elif (degrees > 247.5) and (degrees <= 292.5):
-        degrees = u'\u2190'
+        degrees = '\u2190'
     elif (degrees > 292.5) and (degrees <= 337.5):
-        degrees = u'\u2196'
+        degrees = '\u2196'
 
     return description + ' ' + str(m_s) + 'm/s (' + degrees + ')'
 
@@ -142,7 +142,7 @@ def weather(bot, trigger):
     if not woeid:
         return bot.reply("I don't know where that is.")
 
-    query = urllib.urlencode({'w': woeid, 'u': 'c'})
+    query = urllib.parse.urlencode({'w': woeid, 'u': 'c'})
     url = 'http://weather.yahooapis.com/forecastrss?' + query
     parsed = feedparser.parse(url)
     location = parsed['feed']['title']
@@ -151,7 +151,7 @@ def weather(bot, trigger):
         get_temp(parsed),
         get_humidity(parsed),
         get_wind(parsed)]
-    bot.say(u'{}: {}'.format(location, ", ".join(additional_data)))
+    bot.say('{}: {}'.format(location, ", ".join(additional_data)))
 
 
 @commands('setlocation', 'setwoeid')

@@ -16,7 +16,7 @@
 
 from collections import OrderedDict
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from lpbot.module import commands, example
 
@@ -148,7 +148,7 @@ def search_google(query, cs_cx, api_key):
     ])
 
     query_url = 'https://www.googleapis.com/customsearch/v1?{}'.format(
-        urllib.urlencode(params))
+        urllib.parse.urlencode(params))
 
     r = requests.get(query_url)
 
@@ -174,16 +174,16 @@ def search_google(query, cs_cx, api_key):
 
     r_to_show = total_results if total_results < r_to_show else r_to_show
 
-    msg = u"[google] :: "
+    msg = "[google] :: "
     if r_to_show == 1:
         result = gjson['items'][0]
-        msg += u"{title} - {url} :: {desc}".format(title=result['title'],
+        msg += "{title} - {url} :: {desc}".format(title=result['title'],
                                                    url=result['link'],
                                                    desc=result['snippet'])
     else:
         for i in range(r_to_show):
             result = gjson['items'][i]
-            msg += u"{num} - {url} :: ".format(num=i + 1, url=result['link'])
+            msg += "{num} - {url} :: ".format(num=i + 1, url=result['link'])
 
     return msg
 

@@ -5,7 +5,7 @@
 
 import re
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from lpbot.module import commands, example
 
@@ -25,7 +25,7 @@ def text(html):
 
 
 def wikt(word):
-    bytes = requests.get(uri.format(urllib.quote(word, "/".encode('utf8')))).text
+    bytes = requests.get(uri.format(urllib.parse.quote(word, "/".encode('utf8')))).text
     bytes = r_ul.sub('', bytes)
 
     mode = None
@@ -69,7 +69,7 @@ def format(result, definitions, number=2):
     for part in parts:
         if part in definitions:
             defs = definitions[part][:number]
-            result += u' — {}: '.format(part)
+            result += ' — {}: '.format(part)
             n = ['%s. %s' % (i + 1, e.strip(' .')) for i, e in enumerate(defs)]
             result += ', '.join(n)
     return result.strip(' .,')

@@ -175,5 +175,5 @@ def message(bot, trigger):
         for line in reminders[maximum:]:
             bot.msg(tellee, line)
 
-    if len(bot.memory['reminders'].keys()) != remkeys:
+    if len(list(bot.memory['reminders'].keys())) != remkeys:
         dumpReminders(bot.tell_filename, bot.memory['reminders'], bot.memory['tell_lock'])  # @@ tell

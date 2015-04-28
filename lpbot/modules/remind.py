@@ -117,7 +117,7 @@ scaling = collections.OrderedDict([
     ('s', 1),
 ])
 
-periods = '|'.join(scaling.keys())
+periods = '|'.join(list(scaling.keys()))
 
 
 @commands('in')
@@ -125,8 +125,8 @@ periods = '|'.join(scaling.keys())
 def remind(bot, trigger):
     """Gives you a reminder in the given amount of time."""
     duration = 0
-    message = filter(None, re.split('(\d+(?:\.\d+)? ?(?:(?i)' + periods + ')) ?',
-                                    trigger.group(2))[1:])
+    message = [_f for _f in re.split('(\d+(?:\.\d+)? ?(?:(?i)' + periods + ')) ?',
+                                    trigger.group(2))[1:] if _f]
     reminder = ''
     stop = False
     for piece in message:

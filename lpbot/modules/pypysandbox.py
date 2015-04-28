@@ -5,7 +5,7 @@
 # http://stackoverflow.com/questions/1191374/subprocess-with-timeout
 # PyPy code from: https://github.com/raylu/pbot/blob/master/commands.py
 
-from __future__ import unicode_literals
+
 
 import os
 import subprocess

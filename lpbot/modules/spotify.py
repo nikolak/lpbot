@@ -16,7 +16,7 @@
 
 from collections import OrderedDict
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import re
 
 from lpbot.module import commands, example, rule
@@ -81,14 +81,14 @@ def _search_spotify(query):
     ])
 
     api_url = "https://api.spotify.com/v1/search?{}".format(
-        urllib.urlencode(params))
+        urllib.parse.urlencode(params))
 
     r = requests.get(api_url)
 
     if r.status_code != 200:
         return "Error accessing Spotify API"
 
-    spotify = r.json()[r.json().keys()[0]]
+    spotify = r.json()[list(r.json().keys())[0]]
 
     try:
         if spotify['total'] == 0:
@@ -204,5 +204,5 @@ def search_spotify(bot, trigger):
     if query:
         msg = _search_spotify(query)
 
-    if msg:
-        bot.say("[Spotify] " + msg)
+        if msg:
+            bot.say("[Spotify] " + msg)

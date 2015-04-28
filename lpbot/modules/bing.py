@@ -78,7 +78,7 @@ def search_bing(query, api_key, search_type="Web"):
 
     query_url = api_query.format(s_type=search_type, query=query, results=r_to_show)
 
-    for key, value in request_keymap.items():
+    for key, value in list(request_keymap.items()):
         query_url = query_url.replace(key, value)
 
     r = requests.get(api_base + query_url, auth=(api_key, api_key))
@@ -94,16 +94,16 @@ def search_bing(query, api_key, search_type="Web"):
     if not bjson:
         return "Nothing found"
 
-    msg = u"[bing] :: "
+    msg = "[bing] :: "
     if r_to_show == 1:
         result = bjson[0]
-        msg += u"{title} - {url} :: {desc}".format(title=result['Title'],
+        msg += "{title} - {url} :: {desc}".format(title=result['Title'],
                                                    url=result['Url'],
                                                    desc=result['Description'])
     else:
         for i in range(r_to_show):
             result = bjson[i]
-            msg += u"{num} - {url} :: ".format(num=i + 1, url=result['Url'])
+            msg += "{num} - {url} :: ".format(num=i + 1, url=result['Url'])
 
     return msg
 

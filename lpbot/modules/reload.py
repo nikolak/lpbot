@@ -46,7 +46,7 @@ def f_reload(bot, trigger):
     # Also remove all references to willie callables from top level of the
     # module, so that they will not get loaded again if reloading the
     # module does not override them.
-    for obj_name in old_callables.keys():
+    for obj_name in list(old_callables.keys()):
         delattr(old_module, obj_name)
 
     # Also delete the setup function

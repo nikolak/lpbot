@@ -6,7 +6,7 @@
 
 import re
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import html.parser
 
 from lpbot.module import commands, example
@@ -22,7 +22,7 @@ def wa(bot, trigger):
     query = trigger.group(2)
     uri = 'http://tumbolia.appspot.com/wa/'
 
-    r = requests.get(uri + urllib.quote(query.replace('+', 'plus'),
+    r = requests.get(uri + urllib.parse.quote(query.replace('+', 'plus'),
                                         "/".encode('utf8')))
 
     if r.status_code != 200:
