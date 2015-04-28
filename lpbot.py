@@ -14,11 +14,8 @@ import sys
 from lpbot.tools import stderr
 
 
-if sys.version_info < (2, 7):
-    stderr('Error: Requires Python 2.7')
-    sys.exit(1)
-if sys.version_info.major == 3:
-    stderr('Python 3 is not supported. Check out original code for python 3 support')
+if sys.version_info.major < 3:
+    stderr('Requires python 3')
     sys.exit(1)
 
 import os
