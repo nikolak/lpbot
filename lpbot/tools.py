@@ -517,3 +517,16 @@ class lpbotMemoryWithDefault(defaultdict):
     def unlock(self):
         """Release the write lock."""
         return self.lock.release()
+
+def owner_only(func):
+    def wrapper(*args, **kwargs):
+        bot=args[0]
+        trigger=args[1]
+        if trigger.nick != bot.config.core.owner:
+            return
+        if not bot.memory.get('owner_auth'):
+                return
+
+        return func(*args, **kwargs)
+
+    return wrapper
