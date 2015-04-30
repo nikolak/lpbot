@@ -10,13 +10,14 @@ import time
 import imp
 import subprocess
 
-from lpbot.tools import iteritems
+from lpbot.tools import iteritems, owner_only
 import lpbot.module
 
 
 @lpbot.module.nickname_commands("reload")
 @lpbot.module.priority("low")
 @lpbot.module.thread(False)
+@owner_only
 def f_reload(bot, trigger):
     """Reloads a module, for use by admins only."""
     if not trigger.admin:
@@ -75,6 +76,7 @@ def f_reload(bot, trigger):
 
 
 @lpbot.module.nickname_commands('update')
+@owner_only
 def f_update(bot, trigger):
     """Pulls the latest versions of all modules from Git"""
     if not trigger.admin:
@@ -91,6 +93,7 @@ def f_update(bot, trigger):
 @lpbot.module.nickname_commands("load")
 @lpbot.module.priority("low")
 @lpbot.module.thread(False)
+@owner_only
 def f_load(bot, trigger):
     """Loads a module, for use by admins only."""
     if not trigger.admin:
@@ -126,6 +129,7 @@ def f_load(bot, trigger):
 @lpbot.module.commands("reload")
 @lpbot.module.priority("low")
 @lpbot.module.thread(False)
+@owner_only
 def pm_f_reload(bot, trigger):
     """Wrapper for allowing delivery of .reload command via PM"""
     if trigger.is_privmsg:
@@ -133,6 +137,7 @@ def pm_f_reload(bot, trigger):
 
 
 @lpbot.module.commands('update')
+@owner_only
 def pm_f_update(bot, trigger):
     """Wrapper for allowing delivery of .update command via PM"""
     if trigger.is_privmsg:
@@ -142,6 +147,7 @@ def pm_f_update(bot, trigger):
 @lpbot.module.commands("load")
 @lpbot.module.priority("low")
 @lpbot.module.thread(False)
+@owner_only
 def pm_f_load(bot, trigger):
     """Wrapper for allowing delivery of .load command via PM"""
     if trigger.is_privmsg:
