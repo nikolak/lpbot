@@ -15,15 +15,16 @@ import base64
 import lpbot
 from lpbot.tools import Identifier, iteritems
 from lpbot.logger import get_logger
+from lpbot.module import event, rule, thread, unblockable, event, priority
 
 
 LOGGER = get_logger(__name__)
 
 
-@lpbot.module.event('001', '251')
-@lpbot.module.rule('.*')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@event('001', '251')
+@rule('.*')
+@thread(False)
+@unblockable
 def startup(bot, trigger):
     """Do tasks related to connecting to the network.
 
@@ -83,9 +84,9 @@ def startup(bot, trigger):
             bot.join(channel)
 
 
-@lpbot.module.event('477')
-@lpbot.module.rule('.*')
-@lpbot.module.priority('high')
+@event('477')
+@rule('.*')
+@priority('high')
 def retry_join(bot, trigger):
     """Give NickServer enough time to identify on a +R channel.
 
@@ -111,16 +112,15 @@ def retry_join(bot, trigger):
 # Functions to maintain a list of chanops in all of lpbot's channels.
 
 
-@lpbot.module.rule('(.*)')
-@lpbot.module.event('353')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('(.*)')
+@event('353')
+@priority('high')
+@thread(False)
+@unblockable
 def handle_names(bot, trigger):
     """Handle NAMES response, happens when joining to channels."""
     names = trigger.split()
 
-    #TODO specific to one channel type. See issue 281.
     channels = re.search('(#\S*)', trigger.raw)
     if not channels:
         return
@@ -158,11 +158,11 @@ def handle_names(bot, trigger):
             bot.add_voice(channel, name.lstrip('@&%+~'))
 
 
-@lpbot.module.rule('(.*)')
-@lpbot.module.event('MODE')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('(.*)')
+@event('MODE')
+@priority('high')
+@thread(False)
+@unblockable
 def track_modes(bot, trigger):
     """Track usermode changes and keep our lists of ops up to date."""
     # Mode message format: <channel> *( ( "-" / "+" ) *<modes> *<modeparams> )
@@ -226,15 +226,18 @@ def track_modes(bot, trigger):
                 handle_old_modes(arg, mode)
 
 
-@lpbot.module.rule('.*')
-@lpbot.module.event('NICK')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('.*')
+@event('NICK')
+@priority('high')
+@thread(False)
+@unblockable
 def track_nicks(bot, trigger):
     """Track nickname changes and maintain our chanops list accordingly."""
     old = trigger.nick
     new = Identifier(trigger)
+
+    if old == bot.config.core.owner:
+        bot.memory['owner_auth']=False
 
     # Give debug mssage, and PM the owner, if the bot's own nick changes.
     if old == bot.nick:
@@ -274,27 +277,29 @@ def track_nicks(bot, trigger):
             bot.add_voice(channel, new)
 
 
-@lpbot.module.rule('(.*)')
-@lpbot.module.event('PART')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('(.*)')
+@event('PART')
+@priority('high')
+@thread(False)
+@unblockable
 def track_part(bot, trigger):
     if trigger.nick == bot.nick:
         bot.channels.remove(trigger.sender)
         del bot.privileges[trigger.sender]
     else:
+        if trigger.nick == bot.config.core.owner:
+            bot.memory['owner_auth'] = False
         try:
             del bot.privileges[trigger.sender][trigger.nick]
         except KeyError:
             pass
 
 
-@lpbot.module.rule('.*')
-@lpbot.module.event('KICK')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('.*')
+@event('KICK')
+@priority('high')
+@thread(False)
+@unblockable
 def track_kick(bot, trigger):
     nick = Identifier(trigger.args[1])
     if nick == bot.nick:
@@ -304,17 +309,19 @@ def track_kick(bot, trigger):
         # Temporary fix to stop KeyErrors from being sent to channel
         # The privileges dict may not have all nicks stored at all times
         # causing KeyErrors
+        if trigger.nick == bot.config.core.owner:
+            bot.memory['owner_auth'] = False
         try:
             del bot.privileges[trigger.sender][nick]
         except KeyError:
             pass
 
 
-@lpbot.module.rule('.*')
-@lpbot.module.event('JOIN')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('.*')
+@event('JOIN')
+@priority('high')
+@thread(False)
+@unblockable
 def track_join(bot, trigger):
     if trigger.nick == bot.nick and trigger.sender not in bot.channels:
         bot.channels.append(trigger.sender)
@@ -322,22 +329,24 @@ def track_join(bot, trigger):
     bot.privileges[trigger.sender][trigger.nick] = 0
 
 
-@lpbot.module.rule('.*')
-@lpbot.module.event('QUIT')
-@lpbot.module.priority('high')
-@lpbot.module.thread(False)
-@lpbot.module.unblockable
+@rule('.*')
+@event('QUIT')
+@priority('high')
+@thread(False)
+@unblockable
 def track_quit(bot, trigger):
     for chanprivs in bot.privileges.values():
         if trigger.nick in chanprivs:
             del chanprivs[trigger.nick]
+    if trigger.nick == bot.config.core.owner:
+            bot.memory['owner_auth'] = False
 
 
-@lpbot.module.rule('.*')
-@lpbot.module.event('CAP')
-@lpbot.module.thread(False)
-@lpbot.module.priority('high')
-@lpbot.module.unblockable
+@rule('.*')
+@event('CAP')
+@thread(False)
+@priority('high')
+@unblockable
 def recieve_cap_list(bot, trigger):
     # Server is listing capabilites
     if trigger.args[1] == 'LS':
@@ -410,8 +419,8 @@ def recieve_cap_ack_sasl(bot):
     bot.write(('AUTHENTICATE', mech))
 
 
-@lpbot.module.event('AUTHENTICATE')
-@lpbot.module.rule('.*')
+@event('AUTHENTICATE')
+@rule('.*')
 def auth_proceed(bot, trigger):
     if trigger.args[0] != '+':
         # How did we get here? I am not good with computer.
@@ -427,7 +436,7 @@ def auth_proceed(bot, trigger):
     bot.write(('AUTHENTICATE', base64.b64encode(sasl_token)))
 
 
-@lpbot.module.event('903')
-@lpbot.module.rule('.*')
+@event('903')
+@rule('.*')
 def sasl_success(bot, trigger):
     bot.write(('CAP', 'END'))
