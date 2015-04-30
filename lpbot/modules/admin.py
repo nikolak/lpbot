@@ -8,7 +8,8 @@
 # Licensed under the Eiffel Forum License 2.
 
 
-import lpbot.module
+from lpbot.module import commands, priority, example, event, rule
+from lpbot.tools import owner_only
 
 
 def configure(config):
@@ -16,13 +17,15 @@ def configure(config):
     | [admin] | example | purpose |
     | -------- | ------- | ------- |
     | hold_ground | False | Auto re-join on kick |
+    | owner_pass | string | Password for identifying owner |
     """
     config.add_option('admin', 'hold_ground', "Auto re-join on kick")
+    config.add_option('admin', 'owner_pass', "Password for identifying owner")
 
-
-@lpbot.module.commands('join')
-@lpbot.module.priority('low')
-@lpbot.module.example('.join #example or .join #example key')
+@owner_only
+@commands('join')
+@priority('low')
+@example('.join #example or .join #example key')
 def join(bot, trigger):
     """Join the specified channel. This is an admin-only command."""
     # Can only be done in privmsg by an admin
@@ -38,10 +41,10 @@ def join(bot, trigger):
         else:
             bot.join(channel, key)
 
-
-@lpbot.module.commands('part')
-@lpbot.module.priority('low')
-@lpbot.module.example('.part #example')
+@owner_only
+@commands('part')
+@priority('low')
+@example('.part #example')
 def part(bot, trigger):
     """Part the specified channel. This is an admin-only command."""
     # Can only be done in privmsg by an admin
@@ -56,9 +59,9 @@ def part(bot, trigger):
     else:
         bot.part(channel)
 
-
-@lpbot.module.commands('quit')
-@lpbot.module.priority('low')
+@owner_only
+@commands('quit')
+@priority('low')
 def quit(bot, trigger):
     """Quit from the server. This is an owner-only command."""
     # Can only be done in privmsg by the owner
@@ -73,10 +76,10 @@ def quit(bot, trigger):
 
     bot.quit(quit_message)
 
-
-@lpbot.module.commands('msg')
-@lpbot.module.priority('low')
-@lpbot.module.example('.msg #YourPants Does anyone else smell neurotoxin?')
+@owner_only
+@commands('msg')
+@priority('low')
+@example('.msg #YourPants Does anyone else smell neurotoxin?')
 def msg(bot, trigger):
     """
     Send a message to a given channel or nick. Can only be done in privmsg by an
@@ -96,9 +99,9 @@ def msg(bot, trigger):
 
     bot.msg(channel, message)
 
-
-@lpbot.module.commands('me')
-@lpbot.module.priority('low')
+@owner_only
+@commands('me')
+@priority('low')
 def me(bot, trigger):
     """
     Send an ACTION (/me) to a given channel or nick. Can only be done in privmsg
@@ -120,27 +123,27 @@ def me(bot, trigger):
     bot.msg(channel, msg)
 
 
-@lpbot.module.event('INVITE')
-@lpbot.module.rule('.*')
-@lpbot.module.priority('low')
+@event('INVITE')
+@rule('.*')
+@priority('low')
 def invite_join(bot, trigger):
     """
-    Join a channel willie is invited to, if the inviter is an admin.
+    Join a channel lpbot is invited to, if the inviter is an admin.
     """
     if not trigger.admin:
         return
     bot.join(trigger.args[1])
 
 
-@lpbot.module.event('KICK')
-@lpbot.module.rule(r'.*')
-@lpbot.module.priority('low')
+@event('KICK')
+@rule(r'.*')
+@priority('low')
 def hold_ground(bot, trigger):
     """
-    This function monitors all kicks across all channels willie is in. If it
+    This function monitors all kicks across all channels lpbot is in. If it
     detects that it is the one kicked it'll automatically join that channel.
 
-    WARNING: This may not be needed and could cause problems if willie becomes
+    WARNING: This may not be needed and could cause problems if lpbot becomes
     annoying. Please use this with caution.
     """
     if bot.config.has_section('admin') and bot.config.admin.hold_ground:
@@ -148,11 +151,11 @@ def hold_ground(bot, trigger):
         if trigger.args[1] == bot.nick:
             bot.join(channel)
 
-
-@lpbot.module.commands('mode')
-@lpbot.module.priority('low')
+@owner_only
+@commands('mode')
+@priority('low')
 def mode(bot, trigger):
-    """Set a user mode on Willie. Can only be done in privmsg by an admin."""
+    """Set a user mode on lpbot. Can only be done in privmsg by an admin."""
     if not trigger.is_privmsg:
         return
     if not trigger.admin:
@@ -160,11 +163,11 @@ def mode(bot, trigger):
     mode = trigger.group(3)
     bot.write(('MODE ', bot.nick + ' ' + mode))
 
-
-@lpbot.module.commands('set')
-@lpbot.module.example('.set core.owner Me')
+@owner_only
+@commands('set')
+@example('.set core.owner Me')
 def set_config(bot, trigger):
-    """See and modify values of willies config object.
+    """See and modify values of lpbots config object.
 
     Trigger args:
         arg1 - section and option, in the form "section.option"
@@ -208,9 +211,9 @@ def set_config(bot, trigger):
     # Otherwise, set the value to one given as argument 2.
     setattr(getattr(bot.config, section), option, value)
 
-
-@lpbot.module.commands('ignore')
-@lpbot.module.example('.ignore MysteriousMagent')
+@owner_only
+@commands('ignore')
+@example('.ignore MysteriousMagent')
 def ignore_user(bot, trigger):
     if not trigger.is_privmsg:
         bot.reply("This command only works as a private message.")
@@ -237,9 +240,9 @@ def ignore_user(bot, trigger):
     setattr(getattr(bot.config, 'core'), 'nick_blocks', ','.join(current_blocks))
     bot.reply("User {} added to ignore block".format(user_to_ignore))
 
-
-@lpbot.module.commands("unignore")
-@lpbot.module.example('.unignore someone')
+@owner_only
+@commands("unignore")
+@example('.unignore someone')
 def unignore_user(bot, trigger):
     if not trigger.is_privmsg:
         bot.reply("This command only works as a private message.")
@@ -270,12 +273,30 @@ def unignore_user(bot, trigger):
     bot.reply("User {} removed from ignore list".format(nickname))
 
 
-@lpbot.module.commands('save')
-@lpbot.module.example('.save')
+@commands('save')
+@example('.save')
+@owner_only
 def save_config(bot, trigger):
-    """Save state of willies config object to the configuration file."""
+    """Save state of lpbots config object to the configuration file."""
     if not trigger.is_privmsg:
         return
     if not trigger.admin:
         return
     bot.config.save()
+
+@commands('identify')
+def auth_owner(bot, trigger):
+    print(trigger.admin)
+    if trigger.nick != bot.config.core.owner:
+        return
+    if not trigger.is_privmsg:
+        return
+
+    if trigger.group(2) == bot.config.admin.owner_pass:
+        bot.say("Logged in as owner!")
+        bot.memory['owner_auth'] = True
+
+@commands("amiowner")
+@owner_only
+def amiowner(bot, trigger):
+    bot.say("You are currently identified as owner.")
