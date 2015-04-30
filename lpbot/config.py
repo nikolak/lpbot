@@ -53,12 +53,9 @@ except ImportError:
 import getpass
 import imp
 
-if sys.version_info.major >= 3:
-    unicode = str
-    basestring = str
-    get_input = input
-else:
-    get_input = lambda x: raw_input(x).decode('utf8')
+unicode = str
+basestring = str
+get_input = input
 
 
 class ConfigurationError(Exception):
@@ -116,8 +113,7 @@ class Config(object):
             if not self.parser.has_option('core', 'user'):
                 self.parser.set('core', 'user', 'lpbot')
             if not self.parser.has_option('core', 'name'):
-                self.parser.set('core', 'name',
-                                'lpbot IRC bot')
+                self.parser.set('core', 'name','lpbot IRC bot')
             if not self.parser.has_option('core', 'prefix'):
                 self.parser.set('core', 'prefix', r'\.')
             if not self.parser.has_option('core', 'admins'):
