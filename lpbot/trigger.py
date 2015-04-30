@@ -143,8 +143,8 @@ class Trigger(unicode):
         """
         True if the nick which triggered the command is one of the bot's admins.
         """
-        self.owner = match_host_or_nick(config.core.owner)
+        #self.owner = match_host_or_nick(config.core.owner) and lpbot.tools.lpbotMemory().get('owner_auth', False)
         """True if the nick which triggered the command is the bot's owner."""
-        self.admin = self.admin or self.owner
+        self.admin = self.admin #or self.owner
 
         return self
