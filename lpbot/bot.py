@@ -87,6 +87,7 @@ class LpBot(irc.Bot):
         """The bot's database."""
 
         self.memory = tools.lpbotMemory()
+        self.memory['owner_auth'] = False
         """
         A thread-safe dict for storage of runtime data to be shared between
         modules. See `lpbotMemory <#tools.lpbot.lpbotMemory>`_
