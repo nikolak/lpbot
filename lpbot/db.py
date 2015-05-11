@@ -10,7 +10,7 @@ def _deserialize(value):
         return None
     # sqlite likes to return ints for strings that look like ints, even though
     # the column type is string. That's how you do dynamic typing wrong.
-    value = unicode(value)
+    value = str(value)
     # Just in case someone's mucking with the DB in a way we can't account for,
     # ignore json parsing errors
     try:
@@ -68,7 +68,7 @@ class lpbotDB(object):
                 `url`	TEXT NOT NULL,
                 `channel`	TEXT,
                 `enabled`	INTEGER DEFAULT 1,
-                `seen_links`	TEXT
+                `last_seen`	TEXT
             )"""
         )
 
