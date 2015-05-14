@@ -48,14 +48,14 @@ def version(bot, trigger):
 @lpbot.module.rate(20)
 def ctcp_version(bot, trigger):
     bot.write(('NOTICE', trigger.nick),
-              '\x01VERSION Willie IRC Bot version %s\x01' % lpbot.__version__)
+              '\x01VERSION lpbot IRC Bot version %s\x01' % lpbot.__version__)
 
 
 @lpbot.module.rule('\x01SOURCE\x01')
 @lpbot.module.rate(20)
 def ctcp_source(bot, trigger):
     bot.write(('NOTICE', trigger.nick),
-              '\x01SOURCE https://github.com/Embolalia/willie/\x01')
+              '\x01SOURCE https://github.com/nikola-k/lpbot/\x01')
 
 
 @lpbot.module.rule('\x01PING\s(.*)\x01')
