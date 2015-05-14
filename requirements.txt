@@ -1,7 +1,10 @@
 # python modules that must be installed before the tests can run
-lxml
-pygeoip
-praw
-feedparser
-pyenchant
-requests
+arrow==0.5.4
+feedparser==5.2.0
+lxml==3.4.4
+praw==2.1.21
+pygeoip==0.3.2
+python-dateutil==2.4.2
+requests==2.6.2
+six==1.9.0
+update-checker==0.11
