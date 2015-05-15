@@ -207,6 +207,9 @@ def video_info(bot, trigger):
                   "Comments: {comments} | " \
                   "Likes: {likes} | " \
                   "Dislikes: {dislikes}".format(**values)
+
+        if values['concurrentViewers']!="N/A":
+            message+=" | {} watching now".format(values['concurrentViewers'])
     else:
         message = "[YouTube] Title: {title} |  " \
                   "Uploader: {uploader} | " \
