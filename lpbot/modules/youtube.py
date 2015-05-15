@@ -47,8 +47,6 @@ def configure(config):
 
 
 def setup(bot):
-    if not bot.memory.contains('url_callbacks'):
-        bot.memory['url_callbacks'] = tools.lpbotMemory()
     bot.memory['yt_key'] = checkConfig(bot)
 
 
