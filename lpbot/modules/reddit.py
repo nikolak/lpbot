@@ -35,6 +35,7 @@ def setup(bot):
 def shutdown(bot):
     del bot.memory['url_callbacks'][post_regex]
     del bot.memory['url_callbacks'][user_regex]
+    del bot.memory['url_callbacks'][short_regex]
 
 
 @rule('.*%s.*' % post_url)
