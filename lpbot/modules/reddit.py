@@ -70,7 +70,7 @@ def rpost_info(bot, trigger, match=None):
         author = '[deleted]'
 
     if s.created:
-        post_time = arrow.get(s.created).humanize()
+        post_time = arrow.get(s.created_utc, tzinfo="utc").humanize()
     else:
         post_time = ''
 
