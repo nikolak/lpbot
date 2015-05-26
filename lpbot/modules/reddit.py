@@ -16,10 +16,12 @@ from lpbot import tools
 USER_AGENT = "github.com/Nikola-K/lpbot IRC bot"
 
 domain = r'https?://(?:www\.|np\.)?reddit\.com'
+short_domain = r'https?://(?:www\.|np\.)?redd\.it/(\S+)'
 post_url = '(%s/r/.*?/comments/[\w-]+)' % domain
 user_url = '%s/u(ser)?/([\w-]+)' % domain
 post_regex = re.compile(post_url)
 user_regex = re.compile(user_url)
+short_regex = re.compile(short_domain)
 
 
 def setup(bot):
@@ -27,6 +29,7 @@ def setup(bot):
         bot.memory['url_callbacks'] = tools.lpbotMemory()
     bot.memory['url_callbacks'][post_regex] = rpost_info
     bot.memory['url_callbacks'][user_regex] = redditor_info
+    bot.memory['url_callbacks'][short_regex] = rpost_info
 
 
 def shutdown(bot):
@@ -35,10 +38,17 @@ def shutdown(bot):
 
 
 @rule('.*%s.*' % post_url)
+@rule('.*%s.*' % short_domain)
 def rpost_info(bot, trigger, match=None):
     r = praw.Reddit(user_agent=USER_AGENT)
     match = match or trigger
-    s = r.get_submission(url=match.group(1))
+    
+    if len(match.group(1))<10:
+        post_url = "https://www.reddit.com/comments/{}/".format(match.group(1))
+    else:
+        post_url = match.group(1)
+
+    s = r.get_submission(url=post_url)
 
     message = ('[reddit] {title} {link}{nsfw} | {points} points ({percent}) | '
                '{comments} comments | Posted by {author}')
