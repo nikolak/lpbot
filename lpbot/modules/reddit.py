@@ -7,11 +7,11 @@
 import re
 
 import praw
+import arrow
 
 from lpbot.module import commands, rule, NOLIMIT
 from lpbot.formatting import bold, color, colors
 from lpbot import tools
-
 
 USER_AGENT = "github.com/Nikola-K/lpbot IRC bot"
 
@@ -42,8 +42,8 @@ def shutdown(bot):
 def rpost_info(bot, trigger, match=None):
     r = praw.Reddit(user_agent=USER_AGENT)
     match = match or trigger
-    
-    if len(match.group(1))<10:
+
+    if len(match.group(1)) < 10:
         post_url = "https://www.reddit.com/comments/{}/".format(match.group(1))
     else:
         post_url = match.group(1)
@@ -51,7 +51,7 @@ def rpost_info(bot, trigger, match=None):
     s = r.get_submission(url=post_url)
 
     message = ('[reddit] {title} {link}{nsfw} | {points} points ({percent}) | '
-               '{comments} comments | Posted by {author}')
+               '{comments} comments | Posted by {author} {post_time}')
 
     if s.is_self:
         link = '(self.{})'.format(s.subreddit.display_name)
@@ -68,7 +68,11 @@ def rpost_info(bot, trigger, match=None):
         author = s.author.name
     else:
         author = '[deleted]'
-    # TODO add creation time with s.created
+
+    if s.created:
+        post_time = arrow.get(s.created).humanize()
+    else:
+        post_time = ''
 
     if s.score > 0:
         point_color = colors.GREEN
@@ -79,7 +83,7 @@ def rpost_info(bot, trigger, match=None):
 
     message = message.format(
         title=s.title, link=link, nsfw=nsfw, points=s.score, percent=percent,
-        comments=s.num_comments, author=author)
+        comments=s.num_comments, author=author, post_time=post_time)
     bot.say(message)
 
 
