@@ -3,13 +3,30 @@
 # Copyright 2013 Edward Powell - embolalia.net
 # Licensed under the Eiffel Forum License 2.
 
-import requests
 import re
 
-from lpbot.module import NOLIMIT, commands, example
+import requests
 
+from lpbot.module import NOLIMIT, commands, example, rule
+from lpbot import tools, logger
+
+log = logger.get_logger("wikipedia")
 
 REDIRECT = re.compile(r'^REDIRECT (.*)')
+
+wiki_article = r'https?://(\w+).wikipedia.org/wiki/(\S+)'
+article_regex = re.compile(wiki_article)
+
+
+def setup(bot):
+    if not bot.memory.contains('url_callbacks'):
+        bot.memory['url_callbacks'] = tools.lpbotMemory()
+
+    bot.memory['url_callbacks'][wiki_article] = wiki_info
+
+
+def shutdown(bot):
+    del bot.memory['url_callbacks'][wiki_article]
 
 
 def configure(config):
@@ -61,6 +78,21 @@ def mw_snippet(server, query):
     snippet = snippet[list(snippet.keys())[0]]
 
     return snippet['extract']
+
+
+@rule('.*%s.*' % wiki_article)
+def wiki_info(bot, trigger):
+    lang = trigger.group(1)
+    article = trigger.group(2)
+    server = lang + '.wikipedia.org'
+    try:
+        snippet = mw_snippet(server, article)
+    except Exception as e:
+        log.exception(e)
+        return
+
+    if snippet not in ["…", "..."]:
+        bot.say("[Wikipedia] {}".format(snippet))
 
 
 @commands('w', 'wiki', 'wik')
