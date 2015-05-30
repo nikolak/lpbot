@@ -85,7 +85,9 @@ def f_update(bot, trigger):
     proc = subprocess.Popen('/usr/bin/git pull',
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=True)
-    bot.reply(proc.communicate()[0])
+    resp = proc.communicate()[0]
+
+    bot.reply(resp.decode('utf-8'))
 
     f_reload(bot, trigger)
 
