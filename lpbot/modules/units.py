@@ -181,9 +181,3 @@ def mass(bot, trigger):
         stupid_part = '{:.2f} oz'.format(ounce)
 
     bot.reply('{} = {}'.format(metric_part, stupid_part))
-
-
-if __name__ == "__main__":
-    from lpbot.test_tools import run_example_tests
-
-    run_example_tests(__file__)
