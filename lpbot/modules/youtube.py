@@ -29,7 +29,7 @@ BASE_URL = "https://www.googleapis.com/youtube/v3"
 
 def checkConfig(bot):
     if not bot.config.has_option('youtube', 'api_key'):
-        return None, None
+        return None
     else:
         return bot.config.youtube.api_key
 
