@@ -99,7 +99,7 @@ def f_update(bot, trigger):
     files_update = resp_lines[2:-1]
     if len(files_update)<=3:
         for file_status in files_update:
-            bot.say(file_status)
+            bot.say(file_status.strip())
 
     update_summary = resp_lines[-1:][0].strip()
     bot.say(update_summary)
