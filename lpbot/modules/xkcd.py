@@ -12,22 +12,6 @@ import requests
 
 from lpbot.module import commands
 
-
-ignored_sites = [
-    # For google searching
-    'almamater.xkcd.com',
-    'blog.xkcd.com',
-    'blag.xkcd.com',
-    'forums.xkcd.com',
-    'fora.xkcd.com',
-    'forums3.xkcd.com',
-    'store.xkcd.com',
-    'wiki.xkcd.com',
-    'what-if.xkcd.com',
-]
-sites_query = ' site:xkcd.com -site:' + ' -site:'.join(ignored_sites)
-
-
 def get_info(number=None):
     if number:
         url = 'http://xkcd.com/{}/info.0.json'.format(number)
