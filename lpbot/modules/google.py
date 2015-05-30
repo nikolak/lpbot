@@ -45,7 +45,7 @@ def configure(config):
 
 def search_google(query, cs_cx, api_key):
     """
-    Searches google for query and returns a string with results.nnnnnnn
+    Searches google for query and returns a string with results.
 
     The query can also include additional parameters such as
     "--results int" that specifies number of results to return, must be
