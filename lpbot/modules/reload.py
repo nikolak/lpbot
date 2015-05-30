@@ -12,6 +12,9 @@ import subprocess
 
 from lpbot.tools import iteritems, owner_only
 import lpbot.module
+from lpbot import logger
+
+log = logger.get_logger()
 
 
 @lpbot.module.nickname_commands("reload")
@@ -27,11 +30,11 @@ def f_reload(bot, trigger):
     if name == bot.config.owner:
         return bot.reply('What?')
 
-    if not name or name == '*' or name.upper() == 'ALL THE THINGS':
+    if not name or name == '*':
         bot.callables = None
         bot.commands = None
         bot.setup()
-        return bot.reply('All done!')
+        return bot.reply('Reloading all done!')
 
     if name not in sys.modules:
         return bot.reply('%s: not loaded, try the `load` command' % name)
@@ -85,9 +88,21 @@ def f_update(bot, trigger):
     proc = subprocess.Popen('/usr/bin/git pull',
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, shell=True)
-    resp = proc.communicate()[0]
+    resp = proc.communicate()[0].decode('utf-8')
+    log.info("Update response: \n{}".format(resp))
 
-    bot.reply(resp.decode('utf-8'))
+    resp_lines = resp.splitlines()
+
+    update_info = " ".join(resp_lines[:2])
+    bot.say(update_info)
+
+    files_update = resp_lines[2:-1]
+    if len(files_update)<=3:
+        for file_status in files_update:
+            bot.say(file_status)
+
+    update_summary = resp_lines[-1:][0].strip()
+    bot.say(update_summary)
 
     f_reload(bot, trigger)
 
