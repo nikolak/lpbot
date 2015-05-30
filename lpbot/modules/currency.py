@@ -1,54 +1,65 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2013 Edward Powell, embolalia.com
-# Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
-# Licensed under the Eiffel Forum License 2
+# Copyright 2015 Nikola Kovacevic <nikolak@outlook.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-
-
-import xml.etree as etree
 import re
+
 import requests
 
 from lpbot.module import commands, example, NOLIMIT
+from lpbot.logger import get_logger
 
+log = get_logger()
 
-
-
-
-# The Canadian central bank has better exchange rate data than the Fed, the
-# Bank of England, or the European Central Bank. Who knew?
-base_url = 'http://www.bankofcanada.ca/stats/assets/rates_rss/noon/en_{}.xml'
 regex = re.compile(r'''
     (\d+(?:\.\d+)?)        # Decimal number
     \s*([a-zA-Z]{3})       # 3-letter currency code
-    \s+(?:in|as|of|to)\s+  # preposition
+    \s+(?:in|as|to)\s+  # preposition
     ([a-zA-Z]{3})          # 3-letter currency code
     ''', re.VERBOSE)
 
 
-def get_rate(code):
-    if code == 'CAD':
-        return 1, 'Canadian Dollar'
-    elif code == 'BTC':
-        rates = requests.get('https://api.bitcoinaverage.com/ticker/all').json()
-        return 1 / rates['CAD']['24h_avg'], 'Bitcoin—24hr average'
+def get_rate(amount, base, symbol):
+    API = "https://api.fixer.io/latest?base={base}&symbols={symbol}".format(
+        base=base,
+        symbol=symbol
+    )
 
-    r = requests.get(base_url.format(code))
-    if r.status_code == 404:
-        return False, False
-    data = r.content
-    xml = etree.fromstring(data)
-    namestring = xml.find('{http://purl.org/rss/1.0/}channel/'
-                          '{http://purl.org/rss/1.0/}title').text
-    name = namestring[len('Bank of Canada noon rate: '):]
-    name = re.sub(r'\s*\(noon\)\s*', '', name)
-    rate = xml.find(
-        '{http://purl.org/rss/1.0/}item/'
-        '{http://www.cbwiki.net/wiki/index.php/Specification_1.1}statistics/'
-        '{http://www.cbwiki.net/wiki/index.php/Specification_1.1}exchangeRate/'
-        '{http://www.cbwiki.net/wiki/index.php/Specification_1.1}value').text
-    return float(rate), name
+    r = requests.get(API, timeout=5)
+
+    if r.status_code != 200:
+        try:
+            return r.json()['error']
+        except Exception as e:
+            log.exception(e)
+            return "Error occured while fetching data"
+    try:
+        data = r.json()
+    except Exception as e:
+        log.exception(e)
+        return "Error occured while fetching data"
+
+    if not data.get("rates"):
+        return "Unknown currency symbol {}".format(symbol)
+
+    converted = data['rates'][symbol] * amount
+
+    return "{:.2f} {} = {:.2f} {}".format(amount,
+                                          base,
+                                          converted,
+                                          symbol)
 
 
 @commands('cur', 'currency', 'exchange')
@@ -57,55 +68,16 @@ def exchange(bot, trigger):
     """Show the exchange rate between two currencies"""
     if not trigger.group(2):
         return bot.reply("No search term. An example: .cur 20 EUR in USD")
+
     match = regex.match(trigger.group(2))
     if not match:
-        # It's apologetic, because it's using Canadian data.
-        bot.reply("Sorry, I didn't understand the input.")
+        bot.reply("Invalid input. Example: .cur 20 eur to usd")
         return NOLIMIT
 
-    amount, of, to = match.groups()
+    amount, base, symbol = match.groups()
     try:
         amount = float(amount)
     except:
-        bot.reply("Sorry, I didn't understand the input.")
-    display(bot, amount, of, to)
+        bot.reply("Invalid input. Example: .cur 20 eur to usd")
 
-
-def display(bot, amount, of, to):
-    if not amount:
-        bot.reply("Zero is zero, no matter what country you're in.")
-    try:
-        of_rate, of_name = get_rate(of)
-        if not of_name:
-            bot.reply("Unknown currency: %s" % of)
-            return
-        to_rate, to_name = get_rate(to)
-        if not to_name:
-            bot.reply("Unknown currency: %s" % to)
-            return
-    except Exception as e:
-        bot.reply("Something went wrong while I was getting the exchange rate.")
-        return NOLIMIT
-
-    result = amount / of_rate * to_rate
-    bot.say("{} {} ({}) = {} {} ({})".format(amount, of, of_name,
-                                             result, to, to_name))
-
-
-@commands('btc', 'bitcoin')
-@example('.btc 20 EUR')
-def bitcoin(bot, trigger):
-    # if 2 args, 1st is number and 2nd is currency. If 1 arg, it's either the number or the currency.
-    to = trigger.group(4)
-    amount = trigger.group(3)
-    if not to:
-        to = trigger.group(3) or 'USD'
-        amount = 1
-
-    try:
-        amount = float(amount)
-    except:
-        bot.reply("Sorry, I didn't understand the input.")
-        return NOLIMIT
-
-    display(bot, amount, 'BTC', to)
+    bot.say("[Exchange Rate] " + get_rate(amount, base.upper(), symbol.upper()))
