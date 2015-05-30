@@ -298,7 +298,7 @@ class Bot(asynchat.async_chat):
         # 421 Unknown command, which we'll ignore
         # This needs to come after Authentication as it can cause connection
         # Issues
-        self.write(('CAP', 'LS'))
+        #self.write(('CAP', 'LS'))
 
     def _timeout_check(self):
         while self.connected or self.connecting:
