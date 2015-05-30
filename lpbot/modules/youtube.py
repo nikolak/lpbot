@@ -29,7 +29,7 @@ BASE_URL = "https://www.googleapis.com/youtube/v3"
 
 def checkConfig(bot):
     if not bot.config.has_option('youtube', 'api_key'):
-        return None
+        return None, None
     else:
         return bot.config.youtube.api_key
 
@@ -190,6 +190,7 @@ def youtube_search(bot, trigger):
               "Link: https://youtu.be/{id}".format(**values)
 
     bot.say(message)
+
 
 @rule('.*(youtube.com/watch\S*v=|youtu.be/)([\w-]+).*')
 def video_info(bot, trigger):

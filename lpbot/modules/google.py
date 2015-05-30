@@ -45,7 +45,7 @@ def configure(config):
 
 def search_google(query, cs_cx, api_key):
     """
-    Searches google for query and returns a string with results.
+    Searches google for query and returns a string with results.nnnnnnn
 
     The query can also include additional parameters such as
     "--results int" that specifies number of results to return, must be
@@ -201,6 +201,6 @@ def google(bot, trigger):
     try:
         google_result = search_google(query, cs_cx, api_key)
     except:
-        google_result = "Error while searching google"
+        google_result = "Error while searching bing"
 
     bot.reply(google_result)
