@@ -415,7 +415,7 @@ def read_feeds(bot, force=False):
 
         entry_link = entry.link
         if "www.reddit.com/r/" in entry.link:
-            short_url = "http://redd.it/{}"
+            short_url = "https://redd.it/{}"
             reddit_re= "https://www\.reddit\.com\/r\/.*comments/(.*?)\/"
             try:
                 entry_link = short_url.format(re.search(reddit_re, entry_link).group(1))
