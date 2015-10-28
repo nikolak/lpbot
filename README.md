@@ -8,7 +8,7 @@ specific instance  yourself. Even though this fork does not contain any major ba
 work on all channels and servers just like original version, such changes may be introduced
 in the future.
 
-Modules, and all other changes, are written with **only** python 3 support in mind.
+Modules, and all other changes, are written **only** with python 3 support in mind.
 
 **New modules and files should be licensed under Apache License 2.0, see APACHE LICENSE for more info**
 
