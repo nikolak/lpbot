@@ -33,7 +33,7 @@ def seen(bot, trigger):
         timestamp = format_time(bot.db, bot.config, tz, trigger.nick,
                                 trigger.sender, saw)
 
-        msg = "I last saw %s at %s on %s, saying %s" % (nick, timestamp, channel, message)
+        msg = "I last saw %s at %s on %s, saying \"%s\"" % (nick, timestamp, channel, message)
         bot.say(str(trigger.nick) + ': ' + msg)
     else:
         bot.say("Sorry, I haven't seen %s around." % nick)
