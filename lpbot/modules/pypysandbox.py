@@ -52,7 +52,7 @@ def python(code):
 @commands('python', 'py')
 @example('.py len([1,2,3])')
 def pypy_sandbox(bot, trigger):
-    bot.say("This feature is currently not available.")
-    #code = trigger.group(2)
-    #result = python(code)
-    #bot.say(result)
+    #bot.say("This feature is currently not available.")
+    code = trigger.group(2)
+    result = python(code)
+    bot.say(result)
