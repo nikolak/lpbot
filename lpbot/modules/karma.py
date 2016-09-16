@@ -2,7 +2,7 @@
 
 # Copyright 2016, Benjamin Eßer, <benjamin.esser1@gmail.com>
 
-from lpbot.module import commands
+from lpbot.module import commands, OP
 
 def _set_karma(bot, trigger, change, reset=False):
     """Helper function for increasing/decreasing/resetting user karma."""
@@ -29,6 +29,9 @@ def upvote(bot, trigger):
     if not user:
         bot.say(".upvote <nick> - Give <nick> karma for being helpful.")
         return
+    if user in (trigger.user, trigger.nick):
+        bot.say("Nice try, but you can\'t upvote yourself.")
+        return
     karma = _set_karma(bot, trigger, 1)
     bot.say('{}\'s karma increased by 1, {} now has a total karma of {}.'.format(user,
                                                                                  user,
@@ -40,6 +43,9 @@ def downvote(bot, trigger):
     user = trigger.group(2)
     if not user:
         bot.say(".downvote <nick> - Take karma away from <nick>.")
+        return
+    if user in (trigger.user, trigger.nick):
+        bot.say("Why would you downvote yourself? O_o")
         return
     karma = _set_karma(bot, trigger, -1)
     if karma == -1:
@@ -62,6 +68,8 @@ def karma(bot, trigger):
 @commands('reset_karma')
 def reset_karma(bot, trigger):
     "Reset user karma to 0."
+    if bot.privileges[trigger.sender][trigger.nick] < OP:
+        return
     user = trigger.group(2)
     if not user:
         bot.say(".reset_karma <nick> - Set <nick>\'s karma to 0.")
