@@ -58,10 +58,10 @@ def downvote(bot, trigger):
 @commands('karma')
 def karma(bot, trigger):
     """Report the karma for a user in this channel."""
-    user = trigger.group(2).split()[0]
-    if not user:
+    if not trigger.group(2):
         bot.say(".karma <nick> - Report karma for <nick>.")
         return
+    user = trigger.group(2).split()[0]
     karma = bot.db.get_channel_value(trigger.sender, '{}_karma'.format(user))
     karma = int(karma) if karma else 0
     bot.say('{} has {} karma in {}.'.format(user, karma, trigger.sender))
