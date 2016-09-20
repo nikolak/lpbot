@@ -29,7 +29,7 @@ class lpbotDB(object):
         self._create()
 
 
-    def execute(self, *args, **kwargs):
+    def _execute(self, *args, **kwargs):
         """Execute an arbitrary SQL query against the database.
 
         Returns a cursor object, on which things like `.fetchall()` can be
@@ -41,7 +41,7 @@ class lpbotDB(object):
 
     def _create(self):
         """Create the basic database structure."""
-        self.execute(
+        self._execute(
             """CREATE TABLE IF NOT EXISTS `nickname` (
                 `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
                 `name`	VARCHAR NOT NULL,
@@ -50,7 +50,7 @@ class lpbotDB(object):
             )"""
         )
 
-        self.execute(
+        self._execute(
             """CREATE TABLE IF NOT EXISTS `rssfeed` (
                 `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
                 `name`	TEXT,
@@ -61,7 +61,7 @@ class lpbotDB(object):
             )"""
         )
 
-        self.execute(
+        self._execute(
             'CREATE TABLE IF NOT EXISTS `channel_values` '
             '(channel STRING, key STRING, value STRING, '
             'PRIMARY KEY (channel, key))'
@@ -72,14 +72,14 @@ class lpbotDB(object):
         """Sets the value for a given key to be associated with the channel."""
         channel = channel.lower()
         value = json.dumps(value, ensure_ascii=False)
-        self.execute('INSERT OR REPLACE INTO channel_values VALUES (?, ?, ?)',
+        self._execute('INSERT OR REPLACE INTO channel_values VALUES (?, ?, ?)',
                      [channel, key, value])
 
 
     def get_channel_value(self, channel, key):
         """Retrieves the value for a given key associated with a channel."""
         channel = channel.lower()
-        result = self.execute(
+        result = self._execute(
             'SELECT value FROM channel_values WHERE channel = ? AND key = ?',
             [channel, key]
         ).fetchone()
@@ -98,18 +98,18 @@ class lpbotDB(object):
         nick_id = None
 
         try:
-            row = self.execute('SELECT id FROM nickname WHERE name = ? AND key = ?',[nick.lower(), key]).fetchone()
+            row = self._execute('SELECT id FROM nickname WHERE name = ? AND key = ?',[nick.lower(), key]).fetchone()
             nick_id = row[0]
         except:
             pass
         value = json.dumps(value, ensure_ascii=False)
-        self.execute('INSERT OR REPLACE INTO nickname VALUES (?, ?, ?, ?)',
+        self._execute('INSERT OR REPLACE INTO nickname VALUES (?, ?, ?, ?)',
                      [nick_id, nick.lower(), key, value])
 
 
     def get_nick_value(self, nick, key):
         """Retrieves the value for a given key associated with a nick."""
-        result = self.execute(
+        result = self._execute(
             'SELECT value FROM nickname WHERE name = ? AND key = ?',
             [nick.lower(), key]).fetchone()
         if result is not None:
