@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
-"""*Availability: 4.5+*
 
-The formatting module includes functions to apply IRC formatting to text."""
 # Copyright 2014, Edward D. Powell, embolalia.net
 # Licensed under the Eiffel Forum License 2.
-from __future__ import unicode_literals
-import sys
 
-if sys.version_info.major >= 3:
-    unicode = str
+# Copyright 2016, Benjamin Eßer, <benjamin.esser1@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import sys
+from enum import Enum
 
 # Color names are as specified at http://www.mirc.com/colors.html
 
@@ -22,8 +32,7 @@ CONTROL_BOLD = '\x02'
 """The control code to start or end bold formatting"""
 
 
-# TODO when we can move to 3.3+ completely, make this an Enum.
-class colors:
+class colors(Enum):
     WHITE = '00'
     BLACK = '01'
     BLUE = '02'
@@ -46,8 +55,8 @@ class colors:
     PINK = '13'
     LIGHT_PURPLE = PINK
     FUCHSIA = PINK
-    # TODO GREY and/or GRAY?
     GREY = '14'
+    GRAY = GREY
     LIGHT_GREY = '15'
     SILVER = LIGHT_GREY
 
@@ -56,31 +65,30 @@ def _get_color(color):
     if color is None:
         return None
 
-    # You can pass an int or string of the code
+    # You can pass an int or string of the color code
     try:
         color = int(color)
     except ValueError:
         pass
     if isinstance(color, int):
-        if color > 99:
-            raise ValueError('Can not specify a color above 99.')
-        return unicode(color).rjust(2, '0')
+        max_value = max([int(color.value) for color in colors])
+        if color > max_value:
+            raise ValueError('Maximum color value is {}.'.format(max_value))
+        return color.rjust(2, '0')
 
     # You can also pass the name of the color
     color_name = color.upper()
-    color_dict = colors.__dict__
     try:
-        return color_dict[color_name]
-    except KeyError:
-        raise ValueError('Unknown color name {}'.format(color))
+        return colors.color.value
+    except AttributeError:
+        raise ValueError('Unknown color name: {}'.format(color))
 
 
 def color(text, fg=None, bg=None):
     """Return the text, with the given colors applied in IRC formatting.
 
-    The color can be a string of the color name, or an integer between 0 and
-    99. The known color names can be found in the `colors` class of this
-    module."""
+    The color can be a string of the color name, or the color code as string or integer. 
+	The known color names can be found in the `colors` class of this module."""
     if not fg and not bg:
         return text
 
