@@ -93,7 +93,7 @@ def main(argv=None):
 
         try:
             if os.getuid() == 0 or os.geteuid() == 0:
-                stderr("Don't runt he bot as root")
+                stderr("Don't run the bot as root")
                 sys.exit(1)
         except AttributeError:
             # Windows doesn't have os.getuid/os.geteuid
