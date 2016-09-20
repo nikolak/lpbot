@@ -21,37 +21,26 @@ def _deserialize(value):
 
 
 class lpbotDB(object):
+
     def __init__(self, config):
         self.filename = config.core.db_filename
         if self.filename is None:
             self.filename = os.path.splitext(config.filename)[0] + '.db'
         self._create()
 
-    def connect(self):
-        """Return a raw database connection object."""
-        return sqlite3.connect(self.filename)
 
     def execute(self, *args, **kwargs):
         """Execute an arbitrary SQL query against the database.
 
         Returns a cursor object, on which things like `.fetchall()` can be
         called per PEP 249."""
-        with self.connect() as conn:
+        with sqlite3.connect(self.filename) as conn:
             cur = conn.cursor()
             return cur.execute(*args, **kwargs)
 
+
     def _create(self):
         """Create the basic database structure."""
-        # Do nothing if the db already exists.
-        try:
-            self.execute('SELECT * FROM nickname;')
-            self.execute('SELECT * FROM rssfeed;')
-            self.execute('SELECT * FROM channel_values')
-        except:
-            pass
-        else:
-            return
-
         self.execute(
             """CREATE TABLE IF NOT EXISTS `nickname` (
                 `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,11 +67,14 @@ class lpbotDB(object):
             'PRIMARY KEY (channel, key))'
         )
 
+
     def set_channel_value(self, channel, key, value):
+        """Sets the value for a given key to be associated with the channel."""
         channel = channel.lower()
         value = json.dumps(value, ensure_ascii=False)
         self.execute('INSERT OR REPLACE INTO channel_values VALUES (?, ?, ?)',
                      [channel, key, value])
+
 
     def get_channel_value(self, channel, key):
         """Retrieves the value for a given key associated with a channel."""
