@@ -6,10 +6,6 @@
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import numbers
 import datetime
 import sys
@@ -22,26 +18,17 @@ try:
     import pytz
 except:
     pytz = False
+	
 import traceback
-
-try:
-    import Queue
-except ImportError:
-    import queue as Queue
+import queue
 from collections import defaultdict
 import copy
 import operator
-import codecs
 
-if sys.version_info.major >= 3:
-    unicode = str
-    iteritems = dict.items
-    itervalues = dict.values
-    iterkeys = dict.keys
-else:
-    iteritems = dict.iteritems
-    itervalues = dict.itervalues
-    iterkeys = dict.iterkeys
+#TODO remove this once all modules support Py3 only
+iteritems = dict.items
+itervalues = dict.values
+iterkeys = dict.keys
 
 _channel_prefixes = ('#', '&', '+', '!')
 
@@ -108,14 +95,10 @@ def get_command_regexp(prefix, command):
     return re.compile(pattern, re.IGNORECASE | re.VERBOSE)
 
 
-def deprecate_for_5(thing):
-    warnings.warn(thing + 'will be removed in Willie 5.0. Please see '
-                          'http://willie.dftba.net/willie_5.html for more info.')
-
-
 def deprecated_5(old):
     def new(*args, **kwargs):
-        deprecate_for_5(old.__name__)
+        warnings.warn(old.__name__ + 'will be removed in Willie 5.0. Please see '
+                          'http://willie.dftba.net/willie_5.html for more info.')
         return old(*args, **kwargs)
 
     new.__doc__ = old.__doc__
@@ -123,20 +106,7 @@ def deprecated_5(old):
     return new
 
 
-def deprecated(old):
-    def new(*args, **kwargs):
-        print('Function %s is deprecated.' % old.__name__, file=sys.stderr)
-        trace = traceback.extract_stack()
-        for line in traceback.format_list(trace[:-1]):
-            stderr(line[:-1])
-        return old(*args, **kwargs)
-
-    new.__doc__ = old.__doc__
-    new.__name__ = old.__name__
-    return new
-
-
-class PriorityQueue(Queue.PriorityQueue):
+class PriorityQueue(queue.PriorityQueue):
     """A priority queue with a peek method."""
 
     def peek(self):
@@ -152,7 +122,7 @@ class PriorityQueue(Queue.PriorityQueue):
             self.not_empty.release()
 
 
-class released(object):
+class released:
     """A context manager that releases a lock temporarily."""
 
     def __init__(self, lock):
@@ -184,14 +154,16 @@ class Ddict(dict):
         return dict.__getitem__(self, key)
 
 
-class Identifier(unicode):
-    """A `unicode` subclass which acts appropriately for IRC identifiers.
+class Identifier(str):
+    """A `str` subclass which acts appropriately for IRC identifiers.
 
     When used as normal `unicode` objects, case will be preserved.
     However, when comparing two Identifier objects, or comparing a Identifier
     object with a `unicode` object, the comparison will be case insensitive.
     This case insensitivity includes the case convention conventions regarding
     ``[]``, ``{}``, ``|``, ``\\``, ``^`` and ``~`` described in RFC 2812.
+	TODO: inheritance changed from unicode to str during removal of Py2 support and
+	is as yet untested.
     """
 
     def __new__(cls, identifier):
@@ -200,7 +172,7 @@ class Identifier(unicode):
         # just assume unicode. It won't hurt anything, and is more internally
         # consistent. And who knows, maybe there's another use case for this
         # weird case convention.
-        s = unicode.__new__(cls, identifier)
+        s = str.__new__(cls, identifier)
         s._lowered = Identifier._lower(identifier)
         return s
 
@@ -261,16 +233,14 @@ class Identifier(unicode):
 
 
 class OutputRedirect:
-    """Redirect te output to the terminal and a log file.
+    """Redirect the output to the terminal and a log file.
 
     A simplified object used to write to both the terminal and a log file.
 
     """
 
     def __init__(self, logpath, stderr=False, quiet=False):
-        """Create an object which will to to a file and the terminal.
-
-        Create an object which will log to the file at ``logpath`` as well as
+        """Create an object which will log to the file at ``logpath`` as well as
         the terminal.
         If ``stderr`` is given and true, it will write to stderr rather than
         stdout.
@@ -293,21 +263,12 @@ class OutputRedirect:
             except:
                 pass
 
-        with codecs.open(self.logpath, 'ab', encoding="utf8",
-                         errors='xmlcharrefreplace') as logfile:
+        with open(self.logpath, 'a') as logfile:
             try:
                 logfile.write(string)
             except UnicodeDecodeError:
                 # we got an invalid string, safely encode it to utf-8
-                logfile.write(unicode(string, 'utf8', errors="replace"))
-
-
-# These seems to trace back to when we thought we needed a try/except on prints,
-# because it looked like that was why we were having problems. We'll drop it in
-# 4.0
-@deprecated
-def stdout(string):
-    print(string)
+                logfile.write(str(string, 'utf8'))
 
 
 def stderr(string):
@@ -328,6 +289,8 @@ def check_pid(pid):
 
     """
     try:
+        #second arg prevents signal from getting sent,
+		#so the process is not actually being killed.
         os.kill(pid, 0)
     except OSError:
         return False
@@ -474,7 +437,7 @@ class lpbotMemory(dict):
         return result
 
     def contains(self, key):
-        """Backwards compatability with 3.x, use `in` operator instead."""
+        """Backwards compatibility with 3.x, use `in` operator instead."""
         return self.__contains__(key)
 
     def unlock(self):
