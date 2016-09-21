@@ -8,45 +8,21 @@
 # When working on core IRC protocol related features, consult protocol
 # documentation at http://www.irchelp.org/irchelp/rfc/
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import absolute_import
-
 import sys
 import time
 import socket
 import asyncore
 import asynchat
 import os
-import codecs
 import traceback
-
-from lpbot.tools import stderr, Identifier
-from lpbot.trigger import PreTrigger
-
-
-try:
-    import select
-    import ssl
-
-    has_ssl = True
-except ImportError:
-    # no SSL support
-    has_ssl = False
-if has_ssl:
-    if not hasattr(ssl, 'match_hostname'):
-        # Attempt to import ssl_match_hostname from python-backports
-        import backports.ssl_match_hostname
-
-        ssl.match_hostname = backports.ssl_match_hostname.match_hostname
-        ssl.CertificateError = backports.ssl_match_hostname.CertificateError
+import select
+import ssl
 import errno
 import threading
 from datetime import datetime
 
-if sys.version_info.major >= 3:
-    unicode = str
-
+from lpbot.tools import stderr, Identifier
+from lpbot.trigger import PreTrigger
 
 class Bot(asynchat.async_chat):
     def __init__(self, config):
@@ -110,9 +86,6 @@ class Bot(asynchat.async_chat):
         """ Set to True when a server has accepted the client connection and
         messages can be sent and received. """
 
-        # Work around bot.connecting missing in Python older than 2.7.4
-        if not hasattr(self, "connecting"):
-            self.connecting = False
 
     def log_raw(self, line, prefix):
         """Log raw line to the raw log."""
@@ -129,22 +102,19 @@ class Bot(asynchat.async_chat):
                 stderr('%s %s' % (str(e.__class__), str(e)))
                 stderr('Please fix this and then run lpbot again.')
                 os._exit(1)
-        f = codecs.open(os.path.join(self.config.core.logdir, 'raw.log'),
-                        'a', encoding='utf-8')
-        f.write(prefix + unicode(time.time()) + "\t")
-        temp = line.replace('\n', '')
+        #TODO: make path not hardcoded
+        with open(os.path.join(self.config.core.logdir, 'raw.log'),
+                 'a', 
+                 encoding='utf-8') as rawlog:
+            rawlog.write(prefix + str(time.time()) + "\t")
+            rawlog.write(line.replace('\n', ''))
+            rawlog.write('\n')
 
-        f.write(temp)
-        f.write("\n")
-        f.close()
 
     def safe(self, string):
         """Remove newlines from a string."""
-        if sys.version_info.major >= 3 and isinstance(string, bytes):
+        if isinstance(string, bytes):
             string = string.decode('utf8')
-        elif sys.version_info.major < 3:
-            if not isinstance(string, unicode):
-                string = unicode(string, encoding='utf8')
         string = string.replace('\n', '')
         string = string.replace('\r', '')
         return string
@@ -167,11 +137,13 @@ class Bot(asynchat.async_chat):
         than 510 characters, any remaining characters will not be sent.
 
         """
+		#TODO handle the case of too long lines gracefully by adding ellipses
         args = [self.safe(arg) for arg in args]
         if text is not None:
             text = self.safe(text)
         try:
-            self.writing_lock.acquire()  # Blocking lock, can't send two things
+            self.writing_lock.acquire()  
+			# Blocking lock, can't send two things
             # at a time
 
             # From RFC2812 Internet Relay Chat: Client Protocol
@@ -208,12 +180,9 @@ class Bot(asynchat.async_chat):
                           if self.config.core.bind_host else None)
         self.set_socket(socket.create_connection((host, port),
                                                  source_address=source_address))
-        if self.config.core.use_ssl and has_ssl:
+        if self.config.core.use_ssl:
             self.send = self._ssl_send
             self.recv = self._ssl_recv
-        elif not has_ssl and self.config.core.use_ssl:
-            stderr('SSL is not avilable on your system, attempting connection '
-                   'without it')
         self.connect((host, port))
         try:
             asyncore.loop()
@@ -262,7 +231,7 @@ class Bot(asynchat.async_chat):
             self.write(['JOIN', channel, password])
 
     def handle_connect(self):
-        if self.config.core.use_ssl and has_ssl:
+        if self.config.core.use_ssl:
             if not self.config.core.verify_ssl:
                 self.ssl = ssl.wrap_socket(self.socket,
                                            do_handshake_on_connect=True,
@@ -354,17 +323,17 @@ class Bot(asynchat.async_chat):
                 raise
 
     def collect_incoming_data(self, data):
-        # We can't trust clients to pass valid unicode.
+        # We can't trust clients to pass valid str.
         try:
-            data = unicode(data, encoding='utf-8')
-        except UnicodeDecodeError:
-            # not unicode, let's try cp1252
+            data = str(data, encoding='utf-8')
+        except strDecodeError:
+            # not str, let's try cp1252
             try:
-                data = unicode(data, encoding='cp1252')
-            except UnicodeDecodeError:
+                data = str(data, encoding='cp1252')
+            except strDecodeError:
                 # Okay, let's try ISO8859-1
                 try:
-                    data = unicode(data, encoding='iso8859-1')
+                    data = str(data, encoding='iso8859-1')
                 except:
                     # Discard line if encoding is unknown
                     return
@@ -390,19 +359,22 @@ class Bot(asynchat.async_chat):
         elif pretrigger.args[0] == '433':
             stderr('Nickname already in use!')
             self.handle_close()
-
+		
         self.dispatch(pretrigger)
 
     def dispatch(self, pretrigger):
         pass
-
+		
     def msg(self, recipient, text, max_messages=1):
+        #TODO: it is not obvious how self.stack works, 
+        #add explanation or make code more self-documenting
+
         # We're arbitrarily saying that the max is 400 bytes of text when
         # messages will be split. Otherwise, we'd have to acocunt for the bot's
         # hostmask, which is hard.
         max_text_length = 400
-        # Encode to bytes, for propper length calculation
-        if isinstance(text, unicode):
+        # Encode to bytes, for proper length calculation
+        if isinstance(text, str):
             encoded_text = text.encode('utf-8')
         else:
             encoded_text = text
@@ -416,7 +388,7 @@ class Bot(asynchat.async_chat):
                 excess = encoded_text[last_space + 1:]
                 encoded_text = encoded_text[:last_space]
         # We'll then send the excess at the end
-        # Back to unicode again, so we don't screw things up later.
+        # Back to str again, so we don't screw things up later.
         text = encoded_text.decode('utf-8')
         try:
             self.sending.acquire()
@@ -439,7 +411,7 @@ class Bot(asynchat.async_chat):
                 # Loop detection
                 messages = [m[1] for m in self.stack[recipient_id][-8:]]
 
-                # If what we about to send repeated at least 5 times in the
+                # If what we are about to send repeated at least 5 times in the
                 # last 2 minutes, replace with '...'
                 if messages.count(text) >= 5 and elapsed < 120:
                     text = '...'
@@ -469,8 +441,6 @@ class Bot(asynchat.async_chat):
         """Called internally when a module causes an error."""
         try:
             trace = traceback.format_exc()
-            if sys.version_info.major < 3:
-                trace = trace.decode('utf-8', errors='xmlcharrefreplace')
             stderr(trace)
             try:
                 lines = list(reversed(trace.splitlines()))
@@ -486,7 +456,7 @@ class Bot(asynchat.async_chat):
                 signature = '%s (%s)' % (report[0], report[1])
                 # TODO: make not hardcoded
                 log_filename = os.path.join(self.config.logdir, 'exceptions.log')
-                with codecs.open(log_filename, 'a', encoding='utf-8') as logfile:
+                with open(log_filename, 'a', encoding='utf-8') as logfile:
                     logfile.write('Signature: %s\n' % signature)
                     if trigger:
                         logfile.write('from {} at {}. Message was: {}\n'.format(
@@ -509,9 +479,7 @@ class Bot(asynchat.async_chat):
     def handle_error(self):
         """Handle any uncaptured error in the core.
 
-        Overrides asyncore's handle_error.
-
-        """
+           Overrides asyncore's handle_error."""
         trace = traceback.format_exc()
         stderr(trace)
         self.debug(
@@ -520,10 +488,9 @@ class Bot(asynchat.async_chat):
             'always'
         )
         # TODO: make not hardcoded
-        logfile = codecs.open(
-            os.path.join(self.config.logdir, 'exceptions.log'),
-            'a',
-            encoding='utf-8'
+        logfile = open(os.path.join(self.config.logdir, 'exceptions.log'),
+                       'a',
+                       encoding='utf-8'
         )
         logfile.write('Fatal error in core, handle_error() was called\n')
         logfile.write('last raw line was %s' % self.raw)
