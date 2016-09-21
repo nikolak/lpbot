@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import logging
-
 
 class IrcLoggingHandler(logging.Handler):
     def __init__(self, bot, level):
@@ -27,8 +25,8 @@ class ChannelOutputFormatter(logging.Formatter):
         )
 
     def formatException(self, exc_info):
-        # logging will through a newline between the message and this, but
-        # that's fine because Willie will strip it back out anyway
+        # logging will throw a newline between the message and this, but
+        # that's fine because lpbot will strip it back out anyway
         return ' - ' + repr(exc_info[1])
 
 
@@ -45,9 +43,9 @@ def setup_logging(bot):
 def get_logger(name=None):
     """Return a logger for a module, if the name is given.
 
-    This is equivalent to `logging.getLogger('willie.modules.' + name)` when
-    name is given, and `logging.getLogger('willie')` when it is not. The latter
-    case is intended for use in Willie's core; modules should call
+    This is equivalent to `logging.getLogger('lpbot.modules.' + name)` when
+    name is given, and `logging.getLogger('lpbot')` when it is not. The latter
+    case is intended for use in lpbot's core; modules should call
     `get_logger(__name__)` to get a logger."""
     if name:
         return logging.getLogger('lpbot.modules.' + name)
