@@ -6,13 +6,9 @@
 # Copyright © 2012-2014, Elad Alfassa <elad@fedoraproject.org>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-from __future__ import print_function
-
 import sys
 
 from lpbot.tools import stderr
-
 
 if sys.version_info.major < 3:
     stderr('Requires python 3')
