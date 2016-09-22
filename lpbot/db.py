@@ -51,15 +51,21 @@ class lpbotDB(object):
         )
 
         self._execute(
-            """CREATE TABLE IF NOT EXISTS `rssfeed` (
-                `id`	INTEGER PRIMARY KEY AUTOINCREMENT,
-                `name`	TEXT,
-                `url`	TEXT NOT NULL,
-                `channel`	TEXT,
-                `enabled`	INTEGER DEFAULT 1,
-                `last_seen`	TEXT
+		    """CREATE TABLE IF NOT EXISTS rss_feeds (
+               channel TEXT,
+               feed_name TEXT,
+               feed_url TEXT,
+               fg TINYINT,
+               bg TINYINT,
+               enabled BOOL DEFAULT 1,
+               article_title TEXT,
+               article_url TEXT,
+               published TEXT,
+               etag TEXT,
+               modified TEXT,
+               PRIMARY KEY (channel, feed_name)
             )"""
-        )
+		)
 
         self._execute(
             'CREATE TABLE IF NOT EXISTS `channel_values` '
