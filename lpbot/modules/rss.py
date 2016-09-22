@@ -2,17 +2,17 @@
 
 # Copyright 2012, Michael Yanovich, yanovich.net
 # Copyright 2014, Nikola Kovacevic <nikolak@outlook.com>
+# Copyright 2016, Benjamin Esser <benjamin.esser1@gmail.com>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
 
 from datetime import datetime
 import time
 import re
 import socket
-
 import feedparser
 
+from lpbot.formatting import color, bold
 from lpbot.module import commands, interval
 from lpbot.config import ConfigurationError
 from lpbot.logger import get_logger
@@ -21,52 +21,17 @@ LOGGER = get_logger(__name__)
 
 socket.setdefaulttimeout(10)
 
-INTERVAL = 60 * 1  # seconds between checking for new updates
+INTERVAL = 60  # seconds between checking for new updates
 
+# TODO: the original idea was to abstract all database interaction away from single modules
+# and gather them in lpbot/db.py. This module is an exception because it uses its own db table
+# and other modules are unlikely to reuse something like lpbot.db.set_rss_value(), but it
+# would be nice to have for consistency reasons. Also, all this raw SQL is making the code
+# harder to read than it needs to be, while db.py is already full of it (that's the point).
 
 def setup(bot):
+    #this is probably for reloading purposes (check modules/reload.py)
     bot.memory['rss_manager'] = RSSManager(bot)
-    conn = bot.db.connect()
-    c = conn.cursor()
-
-    # if new table doesn't exist, create it and try importing from old tables
-    # The rss_feeds table was added on 2013-07-17.
-    try:
-        c.execute('SELECT * FROM rss_feeds')
-    except StandardError:
-        create_table(bot, c)
-        conn.commit()
-    conn.close()
-
-
-def create_table(bot, c):
-    # MySQL needs to only compare on the first n characters of a TEXT field
-    # but SQLite won't accept the syntax needed to make it do it.
-    primary_key = '(channel, feed_name)'
-
-    c.execute('''CREATE TABLE IF NOT EXISTS rss_feeds (
-        channel TEXT,
-        feed_name TEXT,
-        feed_url TEXT,
-        fg TINYINT,
-        bg TINYINT,
-        enabled BOOL DEFAULT 1,
-        article_title TEXT,
-        article_url TEXT,
-        published TEXT,
-        etag TEXT,
-        modified TEXT,
-        PRIMARY KEY {0}
-        )'''.format(primary_key))
-
-
-def colour_text(text, fg=None, bg=None):
-    """Given some text and fore/back colours, return a coloured text string."""
-    if fg is None:
-        return text
-    else:
-        colour = '{0},{1}'.format(fg, bg) if bg is not None else fg
-        return "\x03{0}{1}\x03".format(colour, text)
 
 
 @commands('rss')
@@ -80,7 +45,7 @@ class RSSManager:
         self.running = True
 
         # get a list of all methods in this class that start with _rss_
-        self.actions = sorted(method[5:] for method in dir(self) if method[:5] == '_rss_')
+        self.actions = sorted(method[5:] for method in dir(self) if method.startswith('_rss_'))
 
     def _show_doc(self, bot, command):
         """Given an RSS command, say the docstring for the corresponding method."""
@@ -101,34 +66,33 @@ class RSSManager:
             bot.reply("Available RSS commands: " + ', '.join(self.actions))
             return
 
-        conn = bot.db.connect()
-        # run the function and commit database changes if it returns true
-        if getattr(self, '_rss_' + text[1])(bot, trigger, conn.cursor()):
-            conn.commit()
-        conn.close()
+        # run the function
+        getattr(self, '_rss_' + text[1])(bot, trigger)
+        return
 
-    def _rss_start(self, bot, trigger, c):
+
+    def _rss_start(self, bot, trigger):
         """Start fetching feeds. Usage: .rss start"""
         bot.reply("Okay, I'll start fetching RSS feeds..." if not self.running else
                   "Continuing to fetch RSS feeds.")
         LOGGER.debug("RSS started.")
         self.running = True
 
-    def _rss_stop(self, bot, trigger, c):
+    def _rss_stop(self, bot, trigger):
         """Stop fetching feeds. Usage: .rss stop"""
         bot.reply("Okay, I'll stop fetching RSS feeds..." if self.running else
                   "Not currently fetching RSS feeds.")
         LOGGER.debug("RSS stopped.")
         self.running = False
 
-    def _rss_add(self, bot, trigger, c):
+    def _rss_add(self, bot, trigger):
         """Add a feed to a channel, or modify an existing one.
         Set mIRC-style foreground and background colour indices using fg and bg.
         Usage: .rss add <#channel> <Feed_Name> <URL> [fg] [bg]
         """
         pattern = r'''
             ^\.rss\s+add
-            \s+([~&#+!][^\s,]+)   # channel
+            \s+([~&#+!][^\s,]+)  # channel
             \s+("[^"]+"|[\w-]+)  # name, which can contain anything but quotes if quoted
             \s+(\S+)             # url
             (?:\s+(\d+))?        # foreground colour (optional)
@@ -145,24 +109,24 @@ class RSSManager:
         fg = int(match.group(4)) % 16 if match.group(4) else None
         bg = int(match.group(5)) % 16 if match.group(5) else None
 
-        c.execute('''
-            SELECT * FROM rss_feeds WHERE channel = ? AND feed_name = ?
-            ''', (channel, feed_name))
-        if not c.fetchone():
-            c.execute('''
+        result = bot.db._execute(
+                      '''SELECT * FROM rss_feeds WHERE channel = ? AND feed_name = ?
+                      ''',(channel, feed_name))
+        if not result.fetchone():
+            bot.db._execute('''
                 INSERT INTO rss_feeds (channel, feed_name, feed_url, fg, bg)
                 VALUES (?, ?, ?, ?, ?)
                 ''', (channel, feed_name, feed_url, fg, bg))
             bot.reply("Successfully added the feed to the channel.")
         else:
-            c.execute('''
+            bot.db._execute('''
                 UPDATE rss_feeds SET feed_url = ?, fg = ?, bg = ?
                 WHERE channel = ? AND feed_name = ?
                 ''', (feed_url, fg, bg, channel, feed_name))
             bot.reply("Successfully modified the feed.")
         return True
 
-    def _rss_del(self, bot, trigger, c):
+    def _rss_del(self, bot, trigger):
         """Remove one or all feeds from one or all channels.
         Usage: .rss del [#channel] [Feed_Name]
         """
@@ -172,7 +136,7 @@ class RSSManager:
             (?:\s+("[^"]+"|[\w-]+))? # name (optional)
             """
         match = re.match(pattern, trigger.group(), re.IGNORECASE | re.VERBOSE)
-        # at least one of channel and feed name is required
+        # at least one of channel or feed name is required
         if match is None or (not match.group(1) and not match.group(2)):
             self._show_doc(bot, 'del')
             return
@@ -181,38 +145,39 @@ class RSSManager:
         feed_name = match.group(2).strip('"') if match.group(2) else None
         args = [arg for arg in (channel, feed_name) if arg]
 
-        c.execute(('DELETE FROM rss_feeds WHERE '
-                   + ('channel = ? AND ' if channel else '')
-                   + ('feed_name = ?' if feed_name else '')
-                   ).rstrip(' AND '), args)
+        result = bot.db._execute(('''
+		             DELETE FROM rss_feeds WHERE '''
+                     + ('channel = ? AND ' if channel else '')
+                     + ('feed_name = ?' if feed_name else '')
+                     ).rstrip(' AND '), args)
 
-        if c.rowcount:
-            noun = 'feeds' if c.rowcount != 1 else 'feed'
-            bot.reply("Successfully removed {0} {1}.".format(c.rowcount, noun))
+        if result.rowcount:
+            noun = 'feeds' if result.rowcount != 1 else 'feed'
+            bot.reply("Successfully removed {0} {1}.".format(result.rowcount, noun))
         else:
             bot.reply("No feeds matched the command.")
 
         return True
 
-    def _rss_enable(self, bot, trigger, c):
+    def _rss_enable(self, bot, trigger):
         """Enable a feed or feeds. Usage: .rss enable [#channel] [Feed_Name]"""
-        return self._toggle(bot, trigger, c)
+        return self._toggle(bot, trigger)
 
-    def _rss_disable(self, bot, trigger, c):
+    def _rss_disable(self, bot, trigger):
         """Disable a feed or feeds. Usage: .rss disable [#channel] [Feed_Name]"""
-        return self._toggle(bot, trigger, c)
+        return self._toggle(bot, trigger)
 
-    def _toggle(self, bot, trigger, c):
+    def _toggle(self, bot, trigger):
         """Enable or disable a feed or feeds. Usage: .rss <enable|disable> [#channel] [Feed_Name]"""
         command = trigger.group(3)
 
         pattern = r"""
             ^\.rss\s+(enable|disable) # command
-            (?:\s+([~&#+!][^\s,]+))?   # channel (optional)
+            (?:\s+([~&#+!][^\s,]+))?  # channel (optional)
             (?:\s+("[^"]+"|[\w-]+))?  # name (optional)
             """
         match = re.match(pattern, trigger.group(), re.IGNORECASE | re.VERBOSE)
-        # at least one of channel and feed name is required
+        # at least one of channel or feed name is required
         if match is None or (not match.group(2) and not match.group(3)):
             self._show_doc(bot, command)
             return
@@ -222,20 +187,21 @@ class RSSManager:
         feed_name = match.group(3).strip('"') if match.group(3) else None
         args = [arg for arg in (enabled, channel, feed_name) if arg is not None]
 
-        c.execute(('UPDATE rss_feeds SET enabled = ? WHERE '
-                   + ('channel = ? AND ' if channel else '')
-                   + ('feed_name = ?' if feed_name else '')
-                   ).rstrip(' AND '), args)
+        result = bot.db._execute(('''
+                     UPDATE rss_feeds SET enabled = ? WHERE '''
+                     + ('channel = ? AND ' if channel else '')
+                     + ('feed_name = ?' if feed_name else '')
+                     ).rstrip(' AND '), args)
 
-        if c.rowcount:
-            noun = 'feeds' if c.rowcount != 1 else 'feed'
-            bot.reply("Successfully {0}d {1} {2}.".format(command, c.rowcount, noun))
+        if result.rowcount:
+            noun = 'feeds' if result.rowcount != 1 else 'feed'
+            bot.reply("Successfully {0}d {1} {2}.".format(command, result.rowcount, noun))
         else:
             bot.reply("No feeds matched the command.")
 
         return True
 
-    def _rss_list(self, bot, trigger, c):
+    def _rss_list(self, bot, trigger):
         """Get information on all feeds in the database. Usage: .rss list [#channel] [Feed_Name]"""
         pattern = r"""
             ^\.rss\s+list
@@ -250,8 +216,8 @@ class RSSManager:
         channel = match.group(1)
         feed_name = match.group(2).strip('"') if match.group(2) else None
 
-        c.execute('SELECT * FROM rss_feeds')
-        feeds = [RSSFeed(row) for row in c.fetchall()]
+        feeds = [RSSFeed(row) for row in 
+                 bot.db._execute('SELECT * FROM rss_feeds').fetchall()]
 
         if not feeds:
             bot.reply("No RSS feeds in the database.")
@@ -272,16 +238,16 @@ class RSSManager:
         for feed in filtered:
             bot.say("  {0} {1} {2}{3} {4} {5}".format(
                     feed.channel,
-                    colour_text(feed.name, feed.fg, feed.bg),
+                    color(feed.name, feed.fg, feed.bg),
                     feed.url,
                     " (disabled)" if not feed.enabled else '',
                     feed.fg, feed.bg))
 
-    def _rss_fetch(self, bot, trigger, c):
+    def _rss_fetch(self, bot, trigger):
         """Force all RSS feeds to be fetched immediately. Usage: .rss fetch"""
         read_feeds(bot, True)
 
-    def _rss_help(self, bot, trigger, c):
+    def _rss_help(self, bot, trigger):
         """Get help on any of the RSS feed commands. Usage: .rss help <command>"""
         command = trigger.group(4)
         if command in self.actions:
@@ -312,15 +278,19 @@ class RSSFeed:
             setattr(self, column, row[i])
 
 
+def _disable_feed(feed):
+    bot.db._execute('''
+        UPDATE rss_feeds SET enabled = ?
+        WHERE channel = ? AND feed_name = ?
+        ''', (0, feed.channel, feed.name))
+
+
 @interval(INTERVAL)
 def read_feeds(bot, force=False):
     if not bot.memory['rss_manager'].running and not force:
         return
 
-    conn = bot.db.connect()
-    c = conn.cursor()
-    c.execute('SELECT * FROM rss_feeds')
-    feeds = c.fetchall()
+    feeds = bot.db._execute('SELECT * FROM rss_feeds').fetchall()
     if not feeds:
         return
 
@@ -329,46 +299,36 @@ def read_feeds(bot, force=False):
         if not feed.enabled:
             continue
 
-        def disable_feed():
-            c.execute('''
-                UPDATE rss_feeds SET enabled = ?
-                WHERE channel = ? AND feed_name = ?
-                ''', (0, feed.channel, feed.name))
-            conn.commit()
-
         try:
             fp = feedparser.parse(feed.url, etag=feed.etag, modified=feed.modified)
         except IOError as e:
             LOGGER.exception("Can't parse feed on %s, disabling.",
                              feed.name)
-            disable_feed()
+            _disable_feed(feed)
             continue
 
         # fp.status will only exist if pulling from an online feed
-        status = getattr(fp, 'status', None)
-
-        try:
-            LOGGER.debug("%s: status = %s, version = '%s', items = %s",
-                     feed.name, status, fp.version, len(fp.entries))
-        except:
-            #fixme: the above sometimes fails AttributeError: object has no attribute 'version'
-            pass
+		# fp.version sometimes runs into AttributeError
+        fp.status = getattr(fp, 'status', 'unknown')
+        fp.version = getattr(fp, 'version', 'unknown')
+        
+        LOGGER.debug("%s: status = %s, version = '%s', items = %s",
+                     feed.name, fp.status, fp.version, len(fp.entries))
         # check HTTP status
         if status == 301:  # MOVED_PERMANENTLY
             bot.warning(
                 "Got HTTP 301 (Moved Permanently) on %s, updating URI to %s",
                 feed.name, fp.href
             )
-            c.execute('''
+            bot.db._execute('''
                 UPDATE rss_feeds SET feed_url = ?
                 WHERE channel = ? AND feed_name = ?
                 ''', (fp.href, feed.channel, feed.name))
-            conn.commit()
 
         elif status == 410:  # GONE
             LOGGER.warning("Got HTTP 410 (Gone) on {0}, disabling",
                            feed.name)
-            disable_feed()
+            _disable_feed(feed)
 
         if not fp.entries:
             continue
@@ -391,13 +351,12 @@ def read_feeds(bot, force=False):
             continue
 
         # save article title, url, and modified date
-        c.execute('''
+        bot.db._execute('''
             UPDATE rss_feeds
             SET article_title = ?, article_url = ?, published = ?, etag = ?, modified = ?
             WHERE channel = ? AND feed_name = ?
             ''', (entry.title, entry.link, entry_dt, feed_etag, feed_modified,
                   feed.channel, feed.name))
-        conn.commit()
 
         if feed.published and entry_dt:
             published_dt = datetime.strptime(feed.published, "%Y-%m-%d %H:%M:%S")
@@ -423,8 +382,8 @@ def read_feeds(bot, force=False):
                 LOGGER.debug("Matching reddit url {} failed".format(entry_link))
 
         # create message for new entry
-        message = u"[\x02{0}\x02] \x02{1}\x02 - {2}".format(
-            colour_text(feed.name, feed.fg, feed.bg), entry.title, entry_link)
+        message = u"[{0}] {1} - {2}".format(
+            bold(color(feed.name, feed.fg, feed.bg)), bold(entry.title), entry_link)
 
         # append update time if it exists, or published time if it doesn't
         # timestamp = entry_update_dt or entry_dt
@@ -438,5 +397,3 @@ def read_feeds(bot, force=False):
 
         # print message
         bot.msg(feed.channel, message)
-
-    conn.close()
