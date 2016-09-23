@@ -8,3 +8,4 @@ python-dateutil==2.4.2
 requests==2.6.2
 six==1.9.0
 update-checker==0.11
+pytz==2014.10
