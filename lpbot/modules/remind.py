@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright 2011, Sean B. Palmer, inamidst.com
+# Copyright 2016 Benjamin Esser, <benjamin.esser1@gmail.com>
 # Licensed under the Eiffel Forum License 2.
 
 
@@ -9,47 +10,40 @@ import re
 import time
 import threading
 import collections
-import codecs
 from datetime import datetime
 
+import pytz
+
 from lpbot.module import commands, example, NOLIMIT
-import lpbot.tools
-
-
-try:
-    import pytz
-except:
-    pytz = None
+from lpbot.tools import get_timezone, format_time
 
 
 def filename(self):
-    name = self.nick + '-' + self.config.host + '.reminders.db'
+    name = '{}-{}.reminders.db'.format(self.nick, self.config.host)
     return os.path.join(self.config.dotdir, name)
 
 
 def load_database(name):
     data = {}
     if os.path.isfile(name):
-        f = codecs.open(name, 'r', encoding='utf-8')
-        for line in f:
-            unixtime, channel, nick, message = line.split('\t')
-            message = message.rstrip('\n')
-            t = int(float(unixtime))  # WTFs going on here?
-            reminder = (channel, nick, message)
-            try:
-                data[t].append(reminder)
-            except KeyError:
-                data[t] = [reminder]
-        f.close()
+        with open(name, 'r') as f:
+            for line in f.readlines():
+                unixtime, channel, nick, message = line.split('\t')
+                message = message.rstrip('\n')
+                t = int(float(unixtime))  # WTFs going on here?
+                reminder = (channel, nick, message)
+                try:
+                    data[t].append(reminder)
+                except KeyError:
+                    data[t] = [reminder]
     return data
 
 
 def dump_database(name, data):
-    f = codecs.open(name, 'w', encoding='utf-8')
-    for unixtime, reminders in lpbot.tools.iteritems(data):
-        for channel, nick, message in reminders:
-            f.write('%s\t%s\t%s\t%s\n' % (unixtime, channel, nick, message))
-    f.close()
+    with open(name, 'w') as f:
+        for unixtime, reminders in data.items():
+            for channel, nick, message in reminders:
+                f.write('%s\t%s\t%s\t%s\n' % (unixtime, channel, nick, message))
 
 
 def setup(bot):
@@ -145,8 +139,8 @@ def remind(bot, trigger):
         duration = int(duration) + 1
     else:
         duration = int(duration)
-    timezone = lpbot.tools.get_timezone(
-        bot.db, bot.config, None, trigger.nick, trigger.sender)
+    timezone = get_timezone(bot.db, bot.config, None, 
+                            trigger.nick, trigger.sender)
     create_reminder(bot, trigger, duration, reminder, timezone)
 
 
@@ -155,7 +149,7 @@ def remind(bot, trigger):
 def at(bot, trigger):
     """
     Gives you a reminder at the given time. Takes hh:mm:ssTimezone
-    message. Timezone is any timezone Willie takes elsewhere; the best choices
+    message. Timezone is any timezone lpbot takes elsewhere; the best choices
     are those from the tzdb; a list of valid options is available at
     http://dft.ba/-tz . The seconds and timezone are optional.
     """
@@ -169,8 +163,8 @@ def at(bot, trigger):
         second = '0'
 
     if pytz:
-        timezone = lpbot.tools.get_timezone(bot.db, bot.config, tz,
-                                            trigger.nick, trigger.sender)
+        timezone = get_timezone(bot.db, bot.config, tz,
+                                trigger.nick, trigger.sender)
         if not timezone:
             timezone = 'UTC'
         now = datetime.now(pytz.timezone(timezone))
@@ -206,8 +200,8 @@ def create_reminder(bot, trigger, duration, message, tz):
 
     if duration >= 60:
         remind_at = datetime.utcfromtimestamp(t)
-        timef = lpbot.tools.format_time(bot.db, bot.config, tz, trigger.nick,
-                                        trigger.sender, remind_at)
+        timef = format_time(bot.db, bot.config, tz, trigger.nick,
+                            trigger.sender, remind_at)
 
         bot.reply('Okay, will remind at %s' % timef)
     else:
