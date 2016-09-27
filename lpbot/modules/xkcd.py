@@ -10,6 +10,7 @@ import random
 import re
 import requests
 
+from lpbot.modules.google import checkConfig, search_google
 from lpbot.module import commands
 
 def get_info(number=None):
@@ -69,8 +70,11 @@ def xkcd(bot, trigger):
             if (query.lower() == "latest" or query.lower() == "newest"):
                 requested = latest
             else:
-                bot.say("Unknown query")
-                return
+                cs_cx, api_key = checkConfig(bot)
+                query = 'site:xkcd.com {} --results 1'.format(trigger.group(2))
+                result = search_google(query, cs_cx, api_key)
+                xkcd_match = re.search(r"xkcd.com/?(\d+)/", result).group(1)
+                requested = get_info(number=xkcd_match)
 
     message = '{} [{}]'.format(requested['url'], requested['title'])
     bot.say(message)
