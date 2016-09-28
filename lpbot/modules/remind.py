@@ -12,7 +12,10 @@ import threading
 import collections
 from datetime import datetime
 
-import pytz
+try:
+    import pytz
+except:
+    pytz = None
 
 from lpbot.module import commands, example, NOLIMIT
 from lpbot.tools import get_timezone, format_time
