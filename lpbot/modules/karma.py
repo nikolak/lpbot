@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2016, Benjamin Eßer, <benjamin.esser1@gmail.com>
+# Copyright 2016, Benjamin Esser, <benjamin.esser1@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ def _set_karma(bot, trigger, change, reset=False):
 @commands('upvote')
 def upvote(bot, trigger):
     """Give a user karma for being helpful."""
-    user = trigger.group(2)
+    user = trigger.group(2).split()[0]
     if not user:
         bot.say(".upvote <nick> - Give <nick> karma for being helpful.")
         return
@@ -51,7 +51,7 @@ def upvote(bot, trigger):
 @commands('downvote')
 def downvote(bot, trigger):
     """Substract karma (if karma is positive) from a user for not being helpful."""
-    user = trigger.group(2)
+    user = trigger.group(2).split()[0]
     if not user:
         bot.say(".downvote <nick> - Take karma away from <nick>.")
         return
@@ -83,7 +83,7 @@ def reset_karma(bot, trigger):
     if bot.privileges[trigger.sender][trigger.nick] < OP:
         bot.say("reset_karma is an OP-only command.")
         return
-    user = trigger.group(2)
+    user = trigger.group(2).split()[0]
     if not user:
         bot.say(".reset_karma <nick> - Set <nick>\'s karma to 0. (OP only)")
         return
