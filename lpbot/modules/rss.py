@@ -308,14 +308,14 @@ def read_feeds(bot, force=False):
             continue
 
         # fp.status will only exist if pulling from an online feed
-		# fp.version sometimes runs into AttributeError
+        # fp.version sometimes runs into AttributeError
         fp.status = getattr(fp, 'status', 'unknown')
         fp.version = getattr(fp, 'version', 'unknown')
         
         LOGGER.debug("%s: status = %s, version = '%s', items = %s",
                      feed.name, fp.status, fp.version, len(fp.entries))
         # check HTTP status
-        if status == 301:  # MOVED_PERMANENTLY
+        if fp.status == 301:  # MOVED_PERMANENTLY
             bot.warning(
                 "Got HTTP 301 (Moved Permanently) on %s, updating URI to %s",
                 feed.name, fp.href
@@ -325,7 +325,7 @@ def read_feeds(bot, force=False):
                 WHERE channel = ? AND feed_name = ?
                 ''', (fp.href, feed.channel, feed.name))
 
-        elif status == 410:  # GONE
+        elif fp.status == 410:  # GONE
             LOGGER.warning("Got HTTP 410 (Gone) on {0}, disabling",
                            feed.name)
             _disable_feed(feed)
