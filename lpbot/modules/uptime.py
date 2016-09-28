@@ -15,7 +15,7 @@ def setup(bot):
 
 @commands('uptime')
 def uptime(bot, trigger):
-    """.uptime - Returns the uptime of Willie."""
+    """.uptime - Returns the uptime of lpbot."""
     delta = datetime.timedelta(seconds=round((datetime.datetime.utcnow() -
                                               bot.memory["uptime"])
                                              .total_seconds()))

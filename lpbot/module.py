@@ -4,7 +4,6 @@
 It defines the following decorators for defining lpbot callables:
 lpbot.module.rule
 lpbot.module.thread
-lpbot.module.name (deprecated)
 lpbot.module.commands
 lpbot.module.nickname_commands
 lpbot.module.priority
@@ -16,8 +15,6 @@ lpbot.module.example
 # Copyright © 2013, Elad Alfassa <elad@fedoraproject.org>
 # Copyright 2013, Lior Ramati <firerogue517@gmail.com>
 # Licensed under the Eiffel Forum License 2.
-
-from __future__ import unicode_literals
 
 import functools
 
@@ -138,16 +135,6 @@ def thread(value):
         return function
 
     return add_attribute
-
-
-def name(value):
-    """Decorator. Equivalent to func.name = value.
-
-    This attribute is considered deprecated in 3.1.
-
-    """
-    raise DeprecationWarning("This attribute is considered deprecated in 3.1."
-                             " Replace tuple-form .rule with a regexp.")
 
 
 def commands(*command_list):
@@ -278,12 +265,10 @@ def event(*event_list):
 def rate(value):
     """Decorator. Equivalent to func.rate = value.
 
-    Availability: 2+
-
     This limits the frequency with which a single user may use the function. If
     a function is given a rate of 20, a single user may only use that function
     once every 20 seconds. This limit applies to each user individually. Users
-    on the admin list in lpbot’s configuration are exempted from rate limits.
+    on the admin list in lpbot's configuration are exempted from rate limits.
 
     """
 

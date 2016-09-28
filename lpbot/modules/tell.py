@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright 2008, Sean B. Palmer, inamidst.com
+# Copyright 2016 Benjamin Esser, <benjamin.esser1@gmail.com>
 # Licensed under the Eiffel Forum License 2.
 
 import os
@@ -8,30 +9,26 @@ import time
 import threading
 import sys
 
-import lpbot.tools
-from lpbot.tools import Identifier, iterkeys
+from lpbot.tools import Identifier, get_timezone, format_time
 from lpbot.module import commands, nickname_commands, rule, priority, example
 
 
-maximum = 4
+MAXIMUM = 4
 
 
 def loadReminders(fn, lock):
     lock.acquire()
     try:
         result = {}
-        f = open(fn)
-        for line in f:
-            line = line.strip()
-            if sys.version_info.major < 3:
-                line = line.decode('utf-8')
-            if line:
-                try:
-                    tellee, teller, verb, timenow, msg = line.split('\t', 4)
-                except ValueError:
-                    continue  # @@ hmm
-                result.setdefault(tellee, []).append((teller, verb, timenow, msg))
-        f.close()
+        with open(fn) as f:
+            for line in f.readlines():
+                line = line.strip()
+                if line:
+                    try:
+                        tellee, teller, verb, timenow, msg = line.split('\t', maxsplit=4)
+                    except ValueError:
+                        continue  # @@ hmm
+                    result.setdefault(tellee, []).append((teller, verb, timenow, msg))
     finally:
         lock.release()
     return result
@@ -40,58 +37,47 @@ def loadReminders(fn, lock):
 def dumpReminders(fn, data, lock):
     lock.acquire()
     try:
-        f = open(fn, 'w')
-        for tellee in iterkeys(data):
-            for remindon in data[tellee]:
-                line = '\t'.join((tellee,) + remindon)
-                try:
-                    to_write = line + '\n'
-                    if sys.version_info.major < 3:
-                        to_write = to_write.encode('utf-8')
-                    f.write(to_write)
-                except IOError:
-                    break
-        try:
-            f.close()
-        except IOError:
-            pass
+        with open(fn, 'w') as f:
+            for tellee in data.keys():
+                for remindon in data[tellee]:
+                    line = '\t'.join((tellee,) + remindon)
+                    try:
+                        to_write = line + '\n'
+                        f.write(to_write)
+                    except IOError:
+                        break
     finally:
         lock.release()
     return True
 
 
 def setup(self):
-    fn = self.nick + '-' + self.config.host + '.tell.db'
+    fn = '{}-{}.tell.db'.format(self.nick, self.config.host)
     self.tell_filename = os.path.join(self.config.dotdir, fn)
     if not os.path.exists(self.tell_filename):
-        try:
-            f = open(self.tell_filename, 'w')
-        except OSError:
-            pass
-        else:
+        with open(self.tell_filename, 'w'):
             f.write('')
-            f.close()
     self.memory['tell_lock'] = threading.Lock()
     self.memory['reminders'] = loadReminders(self.tell_filename, self.memory['tell_lock'])
 
 
 @commands('tell', 'ask')
 @nickname_commands('tell', 'ask')
-@example('lpbot, tell matt-ex he broke something again.')
+@example('lpbot, tell Nevermind7 he broke something again.')
 def f_remind(bot, trigger):
     """Give someone a message the next time they're seen"""
     teller = trigger.nick
     verb = trigger.group(1)
 
     if not trigger.group(3):
-        bot.reply("%s whom?" % verb)
+        bot.reply("{} whom?".format(verb))
         return
 
     tellee = trigger.group(3).rstrip('.,:;')
     msg = trigger.group(2).lstrip(tellee).lstrip()
 
     if not msg:
-        bot.reply("%s %s what?" % (verb, tellee))
+        bot.reply("{} {} what?".format(verb, tellee))
         return
 
     tellee = Identifier(tellee)
@@ -105,8 +91,8 @@ def f_remind(bot, trigger):
         return bot.reply("I'm here now, you can tell me whatever you want!")
 
     if not tellee in (Identifier(teller), bot.nick, 'me'):
-        tz = lpbot.tools.get_timezone(bot.db, bot.config, None, tellee)
-        timenow = lpbot.tools.format_time(bot.db, bot.config, tz, tellee, channel=trigger.sender)
+        tz = get_timezone(bot.db, bot.config, None, tellee)
+        timenow = format_time(bot.db, bot.config, tz, tellee, channel=trigger.sender)
         bot.memory['tell_lock'].acquire()
         try:
             if not tellee in bot.memory['reminders']:
@@ -116,11 +102,11 @@ def f_remind(bot, trigger):
         finally:
             bot.memory['tell_lock'].release()
 
-        response = "I'll pass that on when %s is around." % tellee
+        response = "I'll pass that on when {} is around.".format(tellee)
 
         bot.reply(response)
     elif Identifier(teller) == tellee:
-        bot.say('You can %s yourself that.' % verb)
+        bot.say('You can {} yourself that.'.format(verb))
     else:
         bot.say("Hey, I'm not as stupid as Monty you know!")
 
@@ -129,7 +115,7 @@ def f_remind(bot, trigger):
 
 def getReminders(bot, channel, key, tellee):
     lines = []
-    template = "%s: %s <%s> %s %s %s"
+    template = "{tellee}: {datetime} <{teller}> {verb} {tellee} {msg}"
     today = time.strftime('%d %b', time.gmtime())
 
     bot.memory['tell_lock'].acquire()
@@ -137,7 +123,7 @@ def getReminders(bot, channel, key, tellee):
         for (teller, verb, datetime, msg) in bot.memory['reminders'][key]:
             if datetime.startswith(today):
                 datetime = datetime[len(today) + 1:]
-            lines.append(template % (tellee, datetime, teller, verb, tellee, msg))
+            lines.append(template .format(tellee, datetime, teller, verb, tellee, msg))
 
         try:
             del bot.memory['reminders'][key]
@@ -167,12 +153,12 @@ def message(bot, trigger):
         elif tellee.startswith(remkey.rstrip('*:')):
             reminders.extend(getReminders(bot, channel, remkey, tellee))
 
-    for line in reminders[:maximum]:
+    for line in reminders[:MAXIMUM]:
         bot.say(line)
 
-    if reminders[maximum:]:
+    if reminders[MAXIMUM:]:
         bot.say('Further messages sent privately')
-        for line in reminders[maximum:]:
+        for line in reminders[MAXIMUM:]:
             bot.msg(tellee, line)
 
     if len(list(bot.memory['reminders'].keys())) != remkeys:

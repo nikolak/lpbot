@@ -3,10 +3,11 @@
 # Copyright 2008, Sean B. Palmer, inamidst.com
 # Copyright © 2013, Elad Alfassa, <elad@fedoraproject.org>
 # Copyright 2014, Nikola Kovacevic, <nikolak@outlook.com>
+# Copyright 2016, Benjamin Esser, <benjamin.esser1@gmail.com>
 # Licensed under the Eiffel Forum License 2.
 
 from lpbot.module import commands, rule, example, priority
-from lpbot.tools import iterkeys
+from lpbot.config import ConfigurationError
 
 
 def setup(bot=None):
@@ -14,9 +15,7 @@ def setup(bot=None):
         return
 
     if (bot.config.has_option('help', 'threshold') and not
-    bot.config.help.threshold.isdecimal()):  # non-negative integer
-        from lpbot.config import ConfigurationError
-
+        bot.config.help.threshold.isdecimal()):
         raise ConfigurationError("Attribute threshold of section [help] must be a nonnegative integer")
 
 
@@ -30,8 +29,7 @@ def help(bot, trigger):
         bot.reply(
             'Say .help <command> (for example .help c) to get help for a command, or .commands for a list of commands.')
     else:
-        name = trigger.group(2)
-        name = name.lower()
+        name = trigger.group(2).lower()
 
         if bot.config.has_option('help', 'threshold'):
             threshold = int(bot.config.help.threshold)
@@ -40,7 +38,7 @@ def help(bot, trigger):
 
         if name in bot.doc:
             if len(bot.doc[name][0]) + (1 if bot.doc[name][1] else 0) > threshold:
-                if trigger.nick != trigger.sender:  # don't say that if asked in private
+                if not trigger.is_privmsg:
                     bot.reply(
                         'The documentation for this command is too long; I\'m sending it to you in a private message.')
                 msgfun = lambda l: bot.msg(trigger.nick, l)
@@ -57,7 +55,7 @@ def help(bot, trigger):
 @priority('low')
 def commands(bot, trigger):
     """Return a list of bot's commands"""
-    names = ', '.join(sorted(iterkeys(bot.doc)))
+    names = ', '.join(sorted(bot.doc.keys()))
     if not trigger.is_privmsg:
         bot.reply("I am sending you a private message of all my commands!")
     bot.msg(trigger.nick, 'Commands I recognise: ' + names + '.', max_messages=10)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import re
 import sys
@@ -7,12 +6,7 @@ import sys
 import lpbot.tools
 
 
-if sys.version_info.major >= 3:
-    unicode = str
-    basestring = str
-
-
-class PreTrigger(object):
+class PreTrigger:
     """A parsed message from the server, which has not been matched against
     any rules."""
     component_regex = re.compile(r'([^!]*)!?([^@]*)@?(.*)')
@@ -74,7 +68,7 @@ class PreTrigger(object):
                 self.tags['intent'], self.args[-1] = intent_match.groups()
 
 
-class Trigger(unicode):
+class Trigger(str):
     """A line from the server, which has matched a callable's rules.
 
     Note that CTCP messages (`PRIVMSG`es and `NOTICE`es which start and end
@@ -83,7 +77,7 @@ class Trigger(unicode):
     """
 
     def __new__(cls, config, message, match):
-        self = unicode.__new__(cls, message.args[-1])
+        self = str.__new__(cls, message.args[-1])
         self.sender = message.sender
         # TODO docstring for sender
         self.raw = message.line

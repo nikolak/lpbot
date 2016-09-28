@@ -37,7 +37,7 @@ def configure(config):
     | api_key | ASkdasfn3k259283askdhSAT5OADOAKjbh | Custom search API key |
     """
     chunk = ''
-    if config.option('Cponfiguring google search module', False):
+    if config.option('Configuring google search module', False):
         config.interactive_add('google', 'cs_id', 'Custom search ID', '')
         config.interactive_add('google', 'api_key', 'Custom search API key', '')
     return chunk
@@ -201,6 +201,6 @@ def google(bot, trigger):
     try:
         google_result = search_google(query, cs_cx, api_key)
     except:
-        google_result = "Error while searching bing"
+        google_result = "Error while searching google."
 
     bot.reply(google_result)

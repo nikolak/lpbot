@@ -5,9 +5,6 @@
 # Copyright © 2012, Elad Alfassa <elad@fedoraproject.org>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import absolute_import
 
 import time
 import imp
@@ -28,13 +25,6 @@ from lpbot.logger import get_logger
 
 
 LOGGER = get_logger(__name__)
-
-if sys.version_info.major >= 3:
-    unicode = str
-    basestring = str
-    py3 = True
-else:
-    py3 = False
 
 
 class LpBot(irc.Bot):
@@ -275,12 +265,11 @@ class LpBot(irc.Bot):
             """Compare Job objects according to attribute next_time."""
             return self.next_time - other.next_time
 
-        if py3:
-            def __lt__(self, other):
-                return self.next_time < other.next_time
+        def __lt__(self, other):
+            return self.next_time < other.next_time
 
-            def __gt__(self, other):
-                return self.next_time > other.next_time
+        def __gt__(self, other):
+            return self.next_time > other.next_time
 
         def __str__(self):
             """Return a string representation of the Job object.
@@ -473,7 +462,7 @@ class LpBot(irc.Bot):
             if hasattr(func, 'commands') and func.commands[0]:
                 example = None
                 if hasattr(func, 'example'):
-                    if isinstance(func.example, basestring):
+                    if isinstance(func.example, str):
                         # Support old modules that add the attribute directly.
                         example = func.example
                     else:
@@ -508,7 +497,7 @@ class LpBot(irc.Bot):
 
             if hasattr(func, 'rule'):
                 rules = func.rule
-                if isinstance(rules, basestring):
+                if isinstance(rules, str):
                     rules = [func.rule]
 
                 if isinstance(rules, list):
@@ -579,8 +568,6 @@ class LpBot(irc.Bot):
             self._bot.msg(self._trigger.sender, string, max_messages)
 
         def reply(self, string, notice=False):
-            if isinstance(string, str) and not py3:
-                string = string.decode('utf8')
             if notice:
                 self.notice(
                     '%s: %s' % (self._trigger.nick, string),

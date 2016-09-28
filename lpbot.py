@@ -6,13 +6,9 @@
 # Copyright © 2012-2014, Elad Alfassa <elad@fedoraproject.org>
 # Licensed under the Eiffel Forum License 2.
 
-from __future__ import unicode_literals
-from __future__ import print_function
-
 import sys
 
 from lpbot.tools import stderr
-
 
 if sys.version_info.major < 3:
     stderr('Requires python 3')
@@ -93,7 +89,7 @@ def main(argv=None):
 
         try:
             if os.getuid() == 0 or os.geteuid() == 0:
-                stderr("Don't runt he bot as root")
+                stderr("Don't run the bot as root")
                 sys.exit(1)
         except AttributeError:
             # Windows doesn't have os.getuid/os.geteuid

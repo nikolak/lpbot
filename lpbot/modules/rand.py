@@ -37,7 +37,7 @@ def rand(bot, trigger):
         low, high = high, low
 
     number = random.randint(low, high)
-    bot.reply("random(%d, %d) = %d" % (low, high, number))
+    bot.reply("random({}, {}) = {}".format(low, high, number))
 
 
 if __name__ == "__main__":

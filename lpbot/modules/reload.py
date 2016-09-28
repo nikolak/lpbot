@@ -10,7 +10,7 @@ import time
 import imp
 import subprocess
 
-from lpbot.tools import iteritems, owner_only
+from lpbot.tools import owner_only
 import lpbot.module
 from lpbot import logger
 
@@ -42,7 +42,7 @@ def f_reload(bot, trigger):
     old_module = sys.modules[name]
 
     old_callables = {}
-    for obj_name, obj in iteritems(vars(old_module)):
+    for obj_name, obj in vars(old_module).items():
         if bot.is_callable(obj) or bot.is_shutdown(obj):
             old_callables[obj_name] = obj
 

@@ -20,16 +20,15 @@ def _set_karma(bot, trigger, change, reset=False):
     """Helper function for increasing/decreasing/resetting user karma."""
     channel = trigger.sender
     user = trigger.group(2).split()[0]
-    key = '{}_karma'.format(user)
     
     if reset:
-        bot.db.set_channel_value(channel, key, 0)
+        bot.db.set_nick_value(user, 'karma', 0)
         return
     
-    karma = bot.db.get_channel_value(channel, key)
+    karma = bot.db.get_nick_value(user, 'karma')
     karma = int(karma) if karma else 0
     if karma or change > 0:
-        bot.db.set_channel_value(channel, key, karma + change)
+        bot.db.set_nick_value(user, 'karma', karma + change)
         return karma + change
     else:
         return -1
@@ -69,23 +68,24 @@ def downvote(bot, trigger):
 
 @commands('karma')
 def karma(bot, trigger):
-    """Report the karma for a user in this channel."""
+    """Report the karma for a user."""
     if not trigger.group(2):
         bot.say(".karma <nick> - Report karma for <nick>.")
         return
     user = trigger.group(2).split()[0]
-    karma = bot.db.get_channel_value(trigger.sender, '{}_karma'.format(user))
+    karma = bot.db.get_nick_value(user, 'karma')
     karma = int(karma) if karma else 0
-    bot.say('{} has {} karma in {}.'.format(user, karma, trigger.sender))
+    bot.say('{} has {} karma.'.format(user, karma))
     
 @commands('reset_karma')
 def reset_karma(bot, trigger):
     "Reset user karma to 0."
     if bot.privileges[trigger.sender][trigger.nick] < OP:
+        bot.say("reset_karma is an OP-only command.")
         return
     user = trigger.group(2)
     if not user:
-        bot.say(".reset_karma <nick> - Set <nick>\'s karma to 0.")
+        bot.say(".reset_karma <nick> - Set <nick>\'s karma to 0. (OP only)")
         return
     karma = _set_karma(bot, trigger, 0, reset=True)
     bot.say("{}\'s karma reset to 0.".format(user))
