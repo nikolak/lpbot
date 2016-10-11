@@ -114,7 +114,7 @@ class Bot(asynchat.async_chat):
     def safe(self, string):
         """Remove newlines from a string."""
         if isinstance(string, bytes):
-            string = string.decode('utf8')
+            string = string.decode('utf-8')
         string = string.replace('\n', '')
         string = string.replace('\r', '')
         return string
@@ -326,11 +326,11 @@ class Bot(asynchat.async_chat):
         # We can't trust clients to pass valid str.
         try:
             data = str(data, encoding='utf-8')
-        except strDecodeError:
-            # not str, let's try cp1252
+        except UnicodeDecodeError:
+            # not unicode, let's try cp1252
             try:
                 data = str(data, encoding='cp1252')
-            except strDecodeError:
+            except UnicodeDecodeError:
                 # Okay, let's try ISO8859-1
                 try:
                     data = str(data, encoding='iso8859-1')
