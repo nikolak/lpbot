@@ -65,16 +65,22 @@ def _get_color(color):
     if color is None:
         return None
 
+    # You can pass the color object directly, e.g. colors.GREEN
+    try:
+        return color.value
+    except AttributeError:
+        pass
+
     # You can pass an int or string of the color code
     try:
         color = int(color)
-    except ValueError:
+    except TypeError:
         pass
     if isinstance(color, int):
         max_value = max([int(color.value) for color in colors])
         if color > max_value:
             raise ValueError('Maximum color value is {}.'.format(max_value))
-        return color.rjust(2, '0')
+        return str(color).rjust(2, '0')
 
     # You can also pass the name of the color
     color_name = color.upper()
